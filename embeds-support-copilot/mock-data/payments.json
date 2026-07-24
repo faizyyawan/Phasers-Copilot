@@ -1,0 +1,17 @@
+[
+  {"payment_id":"PAY-2001","booking_id":"BK-1001","user_id":"USR-001","amount":3000,"currency":"PKR","status":"verified","reference":"REF-9001","submitted_at":"2026-07-24T10:12:00+05:00","verified_at":"2026-07-24T10:20:00+05:00"},
+  {"payment_id":"PAY-2002","booking_id":"BK-1002","user_id":"USR-002","amount":0,"currency":"PKR","status":"not_submitted","reference":null,"submitted_at":null,"verified_at":null},
+  {"payment_id":"PAY-2003","booking_id":"BK-1003","user_id":"USR-003","amount":3600,"currency":"PKR","status":"under_review","reference":"REF-9003","submitted_at":"2026-07-24T11:38:00+05:00","verified_at":null},
+  {"payment_id":"PAY-2004","booking_id":"BK-1004","user_id":"USR-004","amount":2100,"currency":"PKR","status":"verified","reference":"REF-9004","submitted_at":"2026-07-23T15:10:00+05:00","verified_at":"2026-07-23T15:19:00+05:00"},
+  {"payment_id":"PAY-2005","booking_id":"BK-1005","user_id":"USR-005","amount":0,"currency":"PKR","status":"not_submitted","reference":null,"submitted_at":null,"verified_at":null},
+  {"payment_id":"PAY-2006","booking_id":"BK-1006","user_id":"USR-006","amount":2550,"currency":"PKR","status":"under_review","reference":"REF-9006","submitted_at":"2026-07-24T11:58:00+05:00","verified_at":null},
+  {"payment_id":"PAY-2007","booking_id":"BK-1007","user_id":"USR-007","amount":0,"currency":"PKR","status":"not_submitted","reference":null,"submitted_at":null,"verified_at":null},
+  {"payment_id":"PAY-2008","booking_id":"BK-1008","user_id":"USR-008","amount":3000,"currency":"PKR","status":"duplicate_review","reference":"REF-9008A","submitted_at":"2026-07-20T14:05:00+05:00","verified_at":"2026-07-20T14:14:00+05:00"},
+  {"payment_id":"PAY-2009","booking_id":"BK-1008","user_id":"USR-008","amount":3000,"currency":"PKR","status":"duplicate_review","reference":"REF-9008B","submitted_at":"2026-07-20T14:06:00+05:00","verified_at":"2026-07-20T14:16:00+05:00"},
+  {"payment_id":"PAY-2010","booking_id":"BK-1009","user_id":"USR-009","amount":3600,"currency":"PKR","status":"refund_pending","reference":"REF-9009","submitted_at":"2026-07-21T13:05:00+05:00","verified_at":"2026-07-21T13:12:00+05:00"},
+  {"payment_id":"PAY-2011","booking_id":"BK-1010","user_id":"USR-010","amount":2100,"currency":"PKR","status":"verified","reference":"REF-9010","submitted_at":"2026-07-22T17:10:00+05:00","verified_at":"2026-07-22T17:19:00+05:00"},
+  {"payment_id":"PAY-2012","booking_id":"BK-1011","user_id":"USR-011","amount":1800,"currency":"PKR","status":"verified","reference":"REF-9011","submitted_at":"2026-07-01T10:05:00+05:00","verified_at":"2026-07-01T10:12:00+05:00"},
+  {"payment_id":"PAY-2013","booking_id":"BK-1012","user_id":"USR-012","amount":2850,"currency":"PKR","status":"refunded","reference":"REF-9012","submitted_at":"2026-07-05T11:05:00+05:00","verified_at":"2026-07-05T11:16:00+05:00"},
+  {"payment_id":"PAY-2014","booking_id":"BK-1013","user_id":"USR-013","amount":3900,"currency":"PKR","status":"verified","reference":"REF-9013","submitted_at":"2026-07-24T12:50:00+05:00","verified_at":"2026-07-24T13:00:00+05:00"},
+  {"payment_id":"PAY-2015","booking_id":"BK-1014","user_id":"USR-014","amount":2250,"currency":"PKR","status":"failed_refund","reference":"REF-9014","submitted_at":"2026-07-10T15:40:00+05:00","verified_at":"2026-07-10T15:48:00+05:00"}
+]

@@ -1,0 +1,127 @@
+# Embeds Support Copilot
+
+Embeds Support Copilot is a learning project for building a customer-support chatbot for a fictional sports-court booking platform. The goal is to move step by step from a beginner RAG system to a complete support copilot that uses retrieval, structured tools, LangGraph orchestration, evaluation, and later QLoRA fine-tuning.
+
+> Practice assumptions created for this learning project. These are not final business policies or legal terms.
+
+## Problem Statement
+
+Sports-court booking support requires two different kinds of answers. Some answers come from policies and guides, such as cancellation rules or troubleshooting steps. Other answers require current transactional data, such as the status of booking `BK-1001`. A useful support copilot must know which source to use.
+
+## Intended Users
+
+- Customers who book courts.
+- Court owners who manage court listings, slots, and availability.
+- Support agents who handle escalations.
+- Administrators who monitor quality, safety, and evaluation.
+
+## Core Learning Separation
+
+```text
+RAG = changing factual knowledge
+Structured tools = current transactional information
+QLoRA = behavior, classification, routing, and formatting
+```
+
+RAG should answer from documents such as booking policies, payment policies, refund rules, troubleshooting guides, and FAQs.
+
+Structured tools should read current records such as booking status, payment status, notification history, court availability, and previous support tickets.
+
+QLoRA should improve behavior: intent classification, entity extraction, query rewriting, tool selection, escalation decisions, structured JSON output, refusal behavior, and support-response style. It should not store business-policy facts.
+
+## Planned Technology Stack
+
+- Python
+- FastAPI
+- LangChain
+- LangGraph
+- Qdrant
+- PostgreSQL
+- Hugging Face Transformers
+- PEFT
+- TRL
+- QLoRA
+- Next.js
+- Docker
+- LangSmith or an equivalent evaluation platform
+
+## Current Project Status
+
+This repository currently contains documentation, fictional support policies, mock transactional data, evaluation datasets, and fine-tuning sample formats only. It intentionally contains no implementation code.
+
+## What You Will Build Yourself
+
+- Document ingestion pipeline
+- Chunking and embedding pipeline
+- Qdrant indexing and retrieval
+- FastAPI backend
+- LangChain retrievers and tools
+- LangGraph workflow
+- PostgreSQL schemas and queries
+- Evaluation harness
+- Next.js support interface
+- Docker environment
+- QLoRA training experiments
+
+## What This Documentation Provides
+
+- A target architecture and phased roadmap
+- Fictional but internally consistent support documents for RAG
+- Evaluation cases for retrieval, answers, routing, and adversarial behavior
+- Mock JSON records for future read-only structured tools
+- Fine-tuning label schema and small reviewed-style JSONL examples
+
+## High-Level Architecture
+
+```text
+Next.js support interface
+          |
+FastAPI backend
+          |
+LangGraph orchestration
+          |
+LangChain retrieval and tools
+          |
+Qdrant + PostgreSQL
+          |
+General LLM + QLoRA routing model
+```
+
+## Project Phases
+
+1. Foundations and baseline RAG
+2. Advanced retrieval
+3. Evaluation
+4. LangGraph orchestration
+5. Structured tools
+6. QLoRA behavior experiments
+7. Productization and deployment planning
+
+## Folder Structure
+
+```text
+embeds-support-copilot/
+|-- README.md
+|-- docs/
+|-- knowledge-base/
+|-- evaluation-data/
+|-- mock-data/
+`-- fine-tuning-data/
+```
+
+## First Milestone
+
+Build a basic RAG MVP that loads Markdown knowledge documents, chunks them, embeds them, stores them in a vector database, retrieves relevant chunks, and generates grounded answers with source citations.
+
+Do not skip directly to LangGraph or QLoRA. A weak baseline RAG system is the foundation you will evaluate and improve.
+
+## How to Use This Repository
+
+Work through the project phase by phase. Start by reading [docs/01-project-overview.md](docs/01-project-overview.md), [docs/02-learning-objectives.md](docs/02-learning-objectives.md), and [docs/16-development-roadmap.md](docs/16-development-roadmap.md). Then use the files in [knowledge-base/](knowledge-base/) as the first RAG corpus.
+
+Implement one capability, evaluate it, record the experiment, and only then move to the next capability. Do not jump to LangGraph, structured tools, or QLoRA before you have a working and evaluated baseline retrieval system.
+
+## Definition of Done
+
+See [docs/20-definition-of-done.md](docs/20-definition-of-done.md). At a high level, the project is done when it can route policy questions to RAG, transactional questions to tools, escalate sensitive or uncertain cases, cite evidence, pass evaluation targets, and preserve user privacy.
+

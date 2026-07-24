@@ -1,0 +1,17 @@
+[
+  {"ticket_id":"TCK-4001","booking_id":"BK-1001","user_id":"USR-001","category":"booking","status":"closed","priority":"low","summary":"Asked for confirmation after payment verification."},
+  {"ticket_id":"TCK-4002","booking_id":"BK-1002","user_id":"USR-002","category":"payment","status":"open","priority":"medium","summary":"Payment deadline approaching; user unsure how to pay."},
+  {"ticket_id":"TCK-4003","booking_id":"BK-1003","user_id":"USR-003","category":"payment","status":"open","priority":"medium","summary":"Payment under review longer than expected."},
+  {"ticket_id":"TCK-4004","booking_id":"BK-1004","user_id":"USR-004","category":"notification","status":"open","priority":"medium","summary":"Booking confirmed message failed delivery."},
+  {"ticket_id":"TCK-4005","booking_id":"BK-1005","user_id":"USR-005","category":"booking","status":"closed","priority":"low","summary":"Booking expired after payment deadline missed."},
+  {"ticket_id":"TCK-4006","booking_id":"BK-1006","user_id":"USR-006","category":"payment","status":"open","priority":"medium","summary":"User submitted payment and waits for verification."},
+  {"ticket_id":"TCK-4007","booking_id":"BK-1007","user_id":"USR-007","category":"booking","status":"closed","priority":"low","summary":"Expired booking explanation provided."},
+  {"ticket_id":"TCK-4008","booking_id":"BK-1008","user_id":"USR-008","category":"refund","status":"open","priority":"high","summary":"Duplicate payment refund review."},
+  {"ticket_id":"TCK-4009","booking_id":"BK-1009","user_id":"USR-009","category":"cancellation","status":"open","priority":"medium","summary":"Customer cancellation refund review."},
+  {"ticket_id":"TCK-4010","booking_id":"BK-1010","user_id":"USR-010","category":"booking","status":"closed","priority":"low","summary":"Reminder message confirmed delivered."},
+  {"ticket_id":"TCK-4011","booking_id":"BK-1011","user_id":"USR-011","category":"booking","status":"closed","priority":"low","summary":"Completed booking feedback."},
+  {"ticket_id":"TCK-4012","booking_id":"BK-1012","user_id":"USR-012","category":"refund","status":"closed","priority":"medium","summary":"Refund completed after court cancellation."},
+  {"ticket_id":"TCK-4013","booking_id":"BK-1013","user_id":"USR-013","category":"booking","status":"closed","priority":"low","summary":"Booking confirmation sent."},
+  {"ticket_id":"TCK-4014","booking_id":"BK-1014","user_id":"USR-014","category":"refund","status":"open","priority":"high","summary":"Failed refund requires manual review."},
+  {"ticket_id":"TCK-4015","booking_id":"BK-1015","user_id":"USR-015","category":"notification","status":"open","priority":"medium","summary":"Invalid phone number caused notification failure."}
+]

@@ -1,0 +1,45 @@
+{
+  "schema_id": "support-behavior-label-schema-v1",
+  "version": "1.0",
+  "description": "Labels for behavior-focused fine-tuning samples. Business-policy facts must remain in RAG.",
+  "intents": [
+    "policy_question",
+    "booking_status",
+    "payment_status",
+    "notification_history",
+    "court_availability",
+    "previous_ticket_search",
+    "account_support",
+    "unsupported_request",
+    "human_escalation"
+  ],
+  "routes": [
+    "rag_search",
+    "get_booking_status",
+    "get_payment_status",
+    "get_notification_history",
+    "get_court_availability",
+    "search_previous_tickets",
+    "human_escalation",
+    "no_tool"
+  ],
+  "entity_types": [
+    "booking_id",
+    "payment_id",
+    "notification_id",
+    "ticket_id",
+    "court_id",
+    "date",
+    "time",
+    "hours_before_slot",
+    "refund_reference"
+  ],
+  "output_contract": {
+    "intent": "string",
+    "entities": "object",
+    "route": "string",
+    "requires_escalation": "boolean",
+    "rewrite": "string|null",
+    "refusal_reason": "string|null"
+  }
+}

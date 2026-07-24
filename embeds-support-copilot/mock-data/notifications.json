@@ -1,0 +1,17 @@
+[
+  {"notification_id":"NTF-3001","booking_id":"BK-1001","user_id":"USR-001","type":"booking_confirmed","status":"delivered","sent_at":"2026-07-24T10:21:00+05:00"},
+  {"notification_id":"NTF-3002","booking_id":"BK-1002","user_id":"USR-002","type":"booking_request_received","status":"delivered","sent_at":"2026-07-24T10:40:00+05:00"},
+  {"notification_id":"NTF-3003","booking_id":"BK-1003","user_id":"USR-003","type":"payment_received","status":"delivered","sent_at":"2026-07-24T11:39:00+05:00"},
+  {"notification_id":"NTF-3004","booking_id":"BK-1004","user_id":"USR-004","type":"booking_confirmed","status":"failed_delivery","sent_at":"2026-07-23T15:20:00+05:00"},
+  {"notification_id":"NTF-3005","booking_id":"BK-1005","user_id":"USR-005","type":"booking_cancelled","status":"delivered","sent_at":"2026-07-23T16:31:00+05:00"},
+  {"notification_id":"NTF-3006","booking_id":"BK-1006","user_id":"USR-006","type":"payment_received","status":"queued","sent_at":"2026-07-24T11:59:00+05:00"},
+  {"notification_id":"NTF-3007","booking_id":"BK-1007","user_id":"USR-007","type":"booking_cancelled","status":"delivered","sent_at":"2026-07-22T09:31:00+05:00"},
+  {"notification_id":"NTF-3008","booking_id":"BK-1008","user_id":"USR-008","type":"refund_initiated","status":"delivered","sent_at":"2026-07-21T09:00:00+05:00"},
+  {"notification_id":"NTF-3009","booking_id":"BK-1009","user_id":"USR-009","type":"booking_cancelled","status":"delivered","sent_at":"2026-07-22T13:05:00+05:00"},
+  {"notification_id":"NTF-3010","booking_id":"BK-1010","user_id":"USR-010","type":"booking_reminder","status":"delivered","sent_at":"2026-08-09T16:00:00+05:00"},
+  {"notification_id":"NTF-3011","booking_id":"BK-1011","user_id":"USR-011","type":"booking_confirmed","status":"delivered","sent_at":"2026-07-01T10:13:00+05:00"},
+  {"notification_id":"NTF-3012","booking_id":"BK-1012","user_id":"USR-012","type":"refund_initiated","status":"delivered","sent_at":"2026-07-06T11:00:00+05:00"},
+  {"notification_id":"NTF-3013","booking_id":"BK-1013","user_id":"USR-013","type":"booking_confirmed","status":"delivered","sent_at":"2026-07-24T13:01:00+05:00"},
+  {"notification_id":"NTF-3014","booking_id":"BK-1014","user_id":"USR-014","type":"refund_initiated","status":"failed_delivery","sent_at":"2026-07-11T10:00:00+05:00"},
+  {"notification_id":"NTF-3015","booking_id":"BK-1015","user_id":"USR-015","type":"booking_request_received","status":"invalid_phone_number","sent_at":"2026-07-24T13:31:00+05:00"}
+]
