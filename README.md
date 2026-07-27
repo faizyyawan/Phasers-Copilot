@@ -121,7 +121,34 @@ Work through the project phase by phase. Start by reading [docs/01-project-overv
 
 Implement one capability, evaluate it, record the experiment, and only then move to the next capability. Do not jump to LangGraph, structured tools, or QLoRA before you have a working and evaluated baseline retrieval system.
 
+## Windows Development Environment
+
+### First-time setup
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\setup_windows.ps1
+```
+
+### Normal daily use
+
+```powershell
+.venv\Scripts\Activate.ps1
+```
+
+Opening a new terminal requires activating `.venv` again.
+
+### Verify the environment
+
+```powershell
+python .\scripts\verify_environment.py
+```
+
+### Exit the environment
+
+```powershell
+deactivate
+```
+
 ## Definition of Done
 
 See [docs/20-definition-of-done.md](docs/20-definition-of-done.md). At a high level, the project is done when it can route policy questions to RAG, transactional questions to tools, escalate sensitive or uncertain cases, cite evidence, pass evaluation targets, and preserve user privacy.
-

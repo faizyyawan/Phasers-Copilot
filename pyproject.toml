@@ -1,0 +1,11 @@
+[project]
+name = "embeds-support-copilot"
+version = "0.1.0"
+description = "Learning project for building a RAG-based support copilot."
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = []
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+

@@ -216,3 +216,10 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Embeds Support Copilot local artifacts
+.venv-py314-backup/
+data/qdrant/
+models/
+checkpoints/
+outputs/

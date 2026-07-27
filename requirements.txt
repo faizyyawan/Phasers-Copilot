@@ -1,0 +1,22 @@
+# Runtime dependencies for Embeds Support Copilot.
+# PyTorch CUDA wheels are installed separately by scripts/setup_windows.ps1:
+#   python -m pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu126
+langchain
+langchain-community
+langchain-text-splitters
+langchain-qdrant
+langgraph
+qdrant-client
+fastapi
+uvicorn
+python-dotenv
+pydantic
+sentence-transformers
+transformers
+accelerate
+datasets
+safetensors
+peft
+trl
+bitsandbytes
+
