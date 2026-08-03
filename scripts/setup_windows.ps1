@@ -19,10 +19,11 @@ py -3.11 --version
 py -3.11 -c "import platform, sys; assert platform.architecture()[0] == '64bit', 'Python 3.11 must be 64-bit'; print(sys.executable); print(platform.architecture())"
 
 Write-Host "Checking NVIDIA GPU..."
-if (Get-Command nvidia-smi -ErrorAction SilentlyContinue) {
+$HasNvidiaGpu = $null -ne (Get-Command nvidia-smi -ErrorAction SilentlyContinue)
+if ($HasNvidiaGpu) {
     nvidia-smi
 } else {
-    Write-Warning "nvidia-smi was not found. CUDA verification will fail if no NVIDIA driver is available."
+    Write-Warning "nvidia-smi was not found. CPU-only PyTorch will be installed."
 }
 
 if (-not (Test-Path -LiteralPath ".venv\Scripts\python.exe")) {
@@ -42,8 +43,13 @@ if ((Get-Command python).Source -ne $VenvPython) {
 python --version
 python -m pip install --upgrade pip setuptools wheel
 
-Write-Host "Installing CUDA-enabled PyTorch..."
-python -m pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu126
+if ($HasNvidiaGpu) {
+    Write-Host "Installing CUDA-enabled PyTorch..."
+    python -m pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu126
+} else {
+    Write-Host "Installing CPU-only PyTorch..."
+    python -m pip install torch torchvision torchaudio
+}
 
 Write-Host "Installing runtime dependencies..."
 python -m pip install -r requirements.txt

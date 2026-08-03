@@ -8,7 +8,11 @@ from langchain_text_splitters import (
     RecursiveCharacterTextSplitter,
 )
 
-from src.ingestion.load_documents import load_documents
+if __package__:
+    from .load_documents import load_documents
+else:
+    # Allow this file to be run directly by VS Code Code Runner.
+    from load_documents import load_documents
 
 DEFAULT_CHUNK_SIZE = 1500
 DEFAULT_CHUNK_OVERLAP = 200

@@ -129,13 +129,31 @@ Implement one capability, evaluate it, record the experiment, and only then move
 powershell -ExecutionPolicy Bypass -File .\scripts\setup_windows.ps1
 ```
 
+This requires the 64-bit Python 3.11 launcher entry (`py -3.11`). If it is
+missing, install Python 3.11 first, then rerun the command. VS Code is already
+configured to use `.venv\Scripts\python.exe`; after setup, use **Python:
+Select Interpreter** once and choose that workspace interpreter if VS Code has
+not selected it automatically.
+
+The setup script detects an NVIDIA GPU automatically. Without one, it installs
+CPU-only PyTorch and completes verification in CPU mode.
+
 ### Normal daily use
 
 ```powershell
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
 .venv\Scripts\Activate.ps1
 ```
 
 Opening a new terminal requires activating `.venv` again.
+
+If your PowerShell execution policy prevents activation, use the virtual
+environment interpreter directly instead:
+
+```powershell
+& .\.venv\Scripts\python.exe -m pytest -q
+& .\.venv\Scripts\python.exe -m src.ingestion.load_documents
+```
 
 ### Verify the environment
 
