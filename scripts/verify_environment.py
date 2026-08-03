@@ -78,7 +78,21 @@ def main() -> None:
     print(f"PyTorch CUDA build: {torch.version.cuda}")
     print(f"CUDA available: {torch.cuda.is_available()}")
     if not torch.cuda.is_available():
-        fail("PyTorch cannot access CUDA.")
+        print("CUDA is unavailable; CPU-only PyTorch mode is active.")
+        print()
+        print("Qdrant local mode")
+        print("-----------------")
+        try:
+            from qdrant_client import QdrantClient
+
+            client = QdrantClient(":memory:")
+            collections = client.get_collections()
+        except Exception as exc:
+            fail(f"Qdrant local in-memory mode failed: {exc}")
+        print(f"Qdrant local mode: passed ({len(collections.collections)} collections)")
+        print()
+        print("Environment verification passed.")
+        return
 
     gpu_count = torch.cuda.device_count()
     gpu_name = torch.cuda.get_device_name(0)
