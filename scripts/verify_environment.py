@@ -8,7 +8,6 @@ import platform
 import sys
 from pathlib import Path
 
-
 REQUIRED_PACKAGES = {
     "torch": "PyTorch",
     "langchain": "LangChain",
@@ -66,7 +65,7 @@ def main() -> None:
         try:
             importlib.import_module(import_name)
             version = package_version(package_name)
-        except Exception as exc:
+        except (ImportError, importlib.metadata.PackageNotFoundError) as exc:
             fail(f"Could not import {label} ({package_name}): {exc}")
         print(f"{label}: {version}")
 
@@ -87,7 +86,7 @@ def main() -> None:
 
             client = QdrantClient(":memory:")
             collections = client.get_collections()
-        except Exception as exc:
+        except (ImportError, RuntimeError, ValueError) as exc:
             fail(f"Qdrant local in-memory mode failed: {exc}")
         print(f"Qdrant local mode: passed ({len(collections.collections)} collections)")
         print()
@@ -106,7 +105,7 @@ def main() -> None:
         b = torch.tensor([4.0, 5.0, 6.0], device="cuda")
         c = a + b
         torch.cuda.synchronize()
-    except Exception as exc:
+    except RuntimeError as exc:
         fail(f"GPU tensor calculation failed: {exc}")
     if c.device.type != "cuda" or c.tolist() != [5.0, 7.0, 9.0]:
         fail("GPU tensor calculation returned an unexpected result.")
@@ -120,7 +119,7 @@ def main() -> None:
 
         client = QdrantClient(":memory:")
         collections = client.get_collections()
-    except Exception as exc:
+    except (ImportError, RuntimeError, ValueError) as exc:
         fail(f"Qdrant local in-memory mode failed: {exc}")
     print(f"Qdrant local mode: passed ({len(collections.collections)} collections)")
 

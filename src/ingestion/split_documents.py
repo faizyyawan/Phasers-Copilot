@@ -1,18 +1,15 @@
 """Split loaded Markdown documents into smaller retrieval chunks."""
 
+import sys
 from collections import Counter
+from collections.abc import Callable
+from pathlib import Path
 
 from langchain_core.documents import Document
 from langchain_text_splitters import (
     MarkdownHeaderTextSplitter,
     RecursiveCharacterTextSplitter,
 )
-
-if __package__:
-    from .load_documents import load_documents
-else:
-    # Allow this file to be run directly by VS Code Code Runner.
-    from load_documents import load_documents
 
 DEFAULT_CHUNK_SIZE = 1500
 DEFAULT_CHUNK_OVERLAP = 200
@@ -153,7 +150,20 @@ def _print_split_report(documents: list[Document], chunks: list[Document]) -> No
     print(f"Chunk IDs unique: {chunk_ids_unique}")
 
 
+def _load_documents_for_report() -> list[Document]:
+    """Load documents for the manual report in module and direct-file runs."""
+    if __package__:
+        from .load_documents import load_documents
+    else:
+        project_root = Path(__file__).resolve().parents[2]
+        sys.path.insert(0, str(project_root))
+        from src.ingestion.load_documents import load_documents
+
+    loader: Callable[[], list[Document]] = load_documents
+    return loader()
+
+
 if __name__ == "__main__":
-    loaded_documents = load_documents()
+    loaded_documents = _load_documents_for_report()
     split_chunks = split_documents(loaded_documents)
     _print_split_report(loaded_documents, split_chunks)

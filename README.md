@@ -47,7 +47,9 @@ QLoRA should improve behavior: intent classification, entity extraction, query r
 
 ## Current Project Status
 
-This repository currently contains documentation, fictional support policies, mock transactional data, evaluation datasets, and fine-tuning sample formats only. It intentionally contains no implementation code.
+This repository currently contains documentation, fictional support policies, mock transactional data, evaluation datasets, fine-tuning sample formats, and the first implementation pieces for a local RAG pipeline. Markdown loading, heading-aware chunking, and local embedding generation are implemented and tested.
+
+Qdrant indexing, retrieval, grounded answer generation, FastAPI, LangGraph orchestration, structured tools, and the UI are not implemented yet.
 
 ## What You Will Build Yourself
 

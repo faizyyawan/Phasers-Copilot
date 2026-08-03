@@ -4,7 +4,6 @@ from pathlib import Path
 
 from langchain_core.documents import Document
 
-
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 KNOWLEDGE_BASE_DIR = PROJECT_ROOT / "knowledge-base"
 
