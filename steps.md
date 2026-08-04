@@ -15,7 +15,7 @@ The repository already contains:
 - Tests under `tests/`.
 - Environment verification in `scripts/verify_environment.py`.
 
-The implemented code currently focuses on Markdown loading, heading-aware chunking, embedding generation, and early retrieval structure. The README says Qdrant indexing, complete retrieval, grounded generation, FastAPI, LangGraph, structured tools, and UI are still future work.
+The implemented code currently covers Markdown loading, heading-aware chunking, embedding generation, and persistent Qdrant indexing. Dense retrieval, grounded generation, FastAPI, LangGraph, structured tools, and UI are still future work.
 
 ## Step 1: Confirm The Local Environment
 
@@ -140,6 +140,11 @@ How to confirm:
 
 Goal: store embedded chunks in a vector database so retrieval can query them.
 
+Status: implemented and tested. Local runs recreate the `knowledge_chunks`
+collection in `data/qdrant/`; tests use Qdrant in-memory mode. For visual
+inspection, `docker compose up -d` starts a localhost-only Qdrant server and
+`--qdrant-url http://localhost:6333` indexes the same chunks for its Dashboard.
+
 Expected code areas:
 
 - `src/ingestion/index_documents.py`
@@ -166,7 +171,7 @@ How to confirm:
 - Add or update tests that use Qdrant in-memory mode:
 
   ```powershell
-  python -m pytest tests/test_embed_documents.py tests/test_split_documents.py -q
+  python -m pytest tests/test_index_documents.py -q
   ```
 
 - Add indexing tests that confirm:
@@ -490,7 +495,7 @@ The next best implementation task is dense retrieval backed by Qdrant in-memory 
 
 Start with:
 
-1. Finish or review `src/ingestion/index_documents.py`.
+1. Review the indexing interfaces in `src/ingestion/index_documents.py`.
 2. Implement real behavior in `src/retrieval/retriever.py`.
 3. Replace the placeholder `tests/test_retrieval.py` with meaningful tests.
 4. Run:

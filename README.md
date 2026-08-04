@@ -47,9 +47,9 @@ QLoRA should improve behavior: intent classification, entity extraction, query r
 
 ## Current Project Status
 
-This repository currently contains documentation, fictional support policies, mock transactional data, evaluation datasets, fine-tuning sample formats, and the first implementation pieces for a local RAG pipeline. Markdown loading, heading-aware chunking, and local embedding generation are implemented and tested.
+This repository currently contains documentation, fictional support policies, mock transactional data, evaluation datasets, fine-tuning sample formats, and the first implementation pieces for a local RAG pipeline. Markdown loading, heading-aware chunking, local embedding generation, and persistent Qdrant indexing are implemented and tested.
 
-Qdrant indexing, retrieval, grounded answer generation, FastAPI, LangGraph orchestration, structured tools, and the UI are not implemented yet.
+Dense retrieval, grounded answer generation, FastAPI, LangGraph orchestration, structured tools, and the UI are not implemented yet.
 
 ## What You Will Build Yourself
 
@@ -162,6 +162,40 @@ environment interpreter directly instead:
 ```powershell
 python .\scripts\verify_environment.py
 ```
+
+### Build the local knowledge index
+
+```powershell
+python -m src.ingestion.index_documents
+```
+
+This command loads and chunks the Markdown knowledge base, generates embeddings,
+and replaces the `knowledge_chunks` collection in `data/qdrant/`. Replacing the
+collection prevents stale or duplicate chunks during this learning-stage full
+reindex workflow.
+
+### Explore the index in Qdrant Dashboard
+
+Start Docker Desktop, then run:
+
+```powershell
+docker compose up -d
+python -m src.ingestion.index_documents --qdrant-url http://localhost:6333
+```
+
+Open [http://localhost:6333/dashboard](http://localhost:6333/dashboard), select
+**Collections**, and open `knowledge_chunks` to inspect its 93 points, vectors,
+and payload metadata. The Compose service binds only to localhost and keeps its
+database in the named Docker volume `qdrant_storage`.
+
+Stop the server without deleting its data:
+
+```powershell
+docker compose down
+```
+
+The original command without `--qdrant-url` remains available for lightweight
+embedded Qdrant usage without Docker.
 
 ### Exit the environment
 
