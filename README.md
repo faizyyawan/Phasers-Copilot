@@ -197,6 +197,38 @@ docker compose down
 The original command without `--qdrant-url` remains available for lightweight
 embedded Qdrant usage without Docker.
 
+### Run the Dockerized test UI
+
+This starts Qdrant, a FastAPI backend, and a Streamlit frontend in separate
+containers. Ollama stays on the Windows host and is reached from the backend at
+`http://host.docker.internal:11434`.
+
+Start Ollama and confirm the local model exists:
+
+```powershell
+ollama serve
+ollama list
+```
+
+Then start the app stack:
+
+```powershell
+docker compose up --build
+```
+
+Open [http://localhost:8501](http://localhost:8501) and ask a question such as:
+
+```text
+How much advance must I pay?
+```
+
+The backend API is available at [http://localhost:8000](http://localhost:8000).
+Its health endpoint should report Qdrant chunks and `qwen3:8b` availability:
+
+```powershell
+Invoke-RestMethod http://localhost:8000/health
+```
+
 ### Exit the environment
 
 ```powershell
