@@ -85,6 +85,41 @@ def no_evidence_answer() -> str:
     )
 
 
+def out_of_scope_answer() -> str:
+    """Return fallback for questions outside the support copilot domain."""
+    return (
+        "I'm sorry, but I can't help with that kind of request. I can help with "
+        "bookings, payments, refunds, cancellations, account questions, and "
+        "troubleshooting."
+    )
+
+
+def account_update_answer() -> str:
+    """Return safe guidance for account detail updates."""
+    return (
+        "I can't update account details directly in this chat. To change your phone "
+        "number or email, use the account settings workflow or contact support. "
+        "Support should verify your identity before changing account information."
+    )
+
+
+def bot_identity_answer() -> str:
+    """Explain what the assistant is and what it can help with."""
+    return (
+        "I'm Embeds Support Copilot, a support assistant for bookings, payments, "
+        "refunds, cancellations, account questions, and troubleshooting."
+    )
+
+
+def user_identity_answer() -> str:
+    """Explain user identity limits without pretending to know the user."""
+    return (
+        "I can't identify who you are from this chat alone. If your question is "
+        "about a booking, payment, notification, or ticket, share the relevant "
+        "reference ID and I can help with that record."
+    )
+
+
 def _money(amount: Any, currency: Any = "PKR") -> str:
     if isinstance(amount, int | float):
         return f"{currency} {amount:,.0f}"

@@ -12,6 +12,7 @@ Use complete, natural sentences.
 Do not mention sources, files, chunks, evidence, or retrieval.
 Do not cite source file names.
 Do not tell the customer to read a policy document; answer their question directly.
+Do not use profanity, insults, slurs, or abusive language, even if the customer uses it.
 For broad policy questions, summarize the key rules, limits, evidence needed,
 and next support step.
 If the evidence is not enough, say what information is needed instead of guessing.
@@ -53,6 +54,7 @@ def build_grounded_prompt(question: str, chunks: Sequence[RetrievedChunk]) -> st
             "Write a conversational answer for the customer.",
             "Do not include citations, source names, file names, or evidence labels.",
             "Do not send the customer to a policy document; answer directly.",
+            "Do not use profanity, insults, slurs, or abusive language.",
             f"Question: {question}",
             "Evidence:",
             format_evidence(chunks),

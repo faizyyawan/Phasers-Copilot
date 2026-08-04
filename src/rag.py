@@ -18,16 +18,25 @@ from .retrieval.retriever import (
     retrieve_from_qdrant,
 )
 from .routing.router import RouteDecision, route_message
+from .safety.profanity import (
+    ABUSE_WARNING_ANSWER,
+    censor_abusive_words,
+    contains_abusive_words,
+)
 from .support.responses import (
     GREETING_ANSWER,
     SMALLTALK_CLOSE_ANSWER,
+    account_update_answer,
     booking_status_answer,
+    bot_identity_answer,
     handoff_answer,
     missing_identifier_answer,
     no_evidence_answer,
     notification_history_answer,
+    out_of_scope_answer,
     payment_status_answer,
     tickets_answer,
+    user_identity_answer,
 )
 from .tools.mock_support_tools import (
     get_booking_status,
@@ -68,7 +77,11 @@ def _built_in_response(
     """Return a deterministic response without retrieval or generation."""
     return RagResponse(
         question=question,
-        answer=GeneratedAnswer(answer=answer, model=BUILT_IN_MODEL_NAME, sources=[]),
+        answer=GeneratedAnswer(
+            answer=censor_abusive_words(answer),
+            model=BUILT_IN_MODEL_NAME,
+            sources=[],
+        ),
         retrieved_chunks=[],
         route=decision.route,
         needs_handoff=needs_handoff,
@@ -84,6 +97,19 @@ def answer_question(
     ollama_url: str = DEFAULT_OLLAMA_URL,
 ) -> RagResponse:
     """Retrieve evidence and ask Ollama to produce a grounded answer."""
+    if contains_abusive_words(question):
+        return RagResponse(
+            question=question,
+            answer=GeneratedAnswer(
+                answer=ABUSE_WARNING_ANSWER,
+                model=BUILT_IN_MODEL_NAME,
+                sources=[],
+            ),
+            retrieved_chunks=[],
+            route="abusive_language",
+            needs_handoff=False,
+        )
+
     decision = route_message(question)
     entities = decision.entities
 
@@ -91,6 +117,14 @@ def answer_question(
         return _built_in_response(question, decision, GREETING_ANSWER)
     if decision.route == "smalltalk_close":
         return _built_in_response(question, decision, SMALLTALK_CLOSE_ANSWER)
+    if decision.route == "out_of_scope":
+        return _built_in_response(question, decision, out_of_scope_answer())
+    if decision.route == "account_update":
+        return _built_in_response(question, decision, account_update_answer())
+    if decision.route == "bot_identity":
+        return _built_in_response(question, decision, bot_identity_answer())
+    if decision.route == "user_identity":
+        return _built_in_response(question, decision, user_identity_answer())
     if decision.route == "human_escalation":
         return _built_in_response(
             question,

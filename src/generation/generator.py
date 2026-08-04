@@ -10,6 +10,7 @@ from typing import Any
 import requests
 
 from ..retrieval.retriever import RetrievedChunk
+from ..safety.profanity import censor_abusive_words
 from .prompt import SYSTEM_PROMPT, build_grounded_prompt
 
 DEFAULT_OLLAMA_URL = "http://localhost:11434"
@@ -51,7 +52,7 @@ def clean_model_answer(answer: str) -> str:
     cleaned = cleaned.strip()
     if not cleaned:
         raise RuntimeError("Ollama response did not include non-empty customer text.")
-    return cleaned
+    return censor_abusive_words(cleaned)
 
 
 def ollama_chat(

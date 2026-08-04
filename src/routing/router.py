@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import re
 from dataclasses import dataclass, field
+from difflib import SequenceMatcher
 
 BOOKING_ID_RE = re.compile(r"\bBK-\d+\b", re.IGNORECASE)
 PAYMENT_ID_RE = re.compile(r"\bPAY-\d+\b", re.IGNORECASE)
@@ -32,7 +33,7 @@ HANDOFF_PATTERNS = (
     r"\bfraud\b",
     r"\blegal\b|\bcompensation\b",
     r"\bdispute|disputed\b",
-    r"\banother customer\b|\bsomeone else\b|\bother user's\b|\bphone number\b",
+    r"\banother customer\b|\bsomeone else\b|\bother user's\b",
     r"\bignore\b.*\b(policy|rules?)\b",
     r"\b(cancel|issue|approve|change)\b.*\b(now|automatically|for me)\b",
 )
@@ -41,6 +42,37 @@ NOTIFICATION_WORDS = ("notification", "whatsapp", "message", "deliver")
 TICKET_WORDS = ("ticket", "previous", "case")
 PAYMENT_WORDS = ("payment", "paid", "pay", "refund", "duplicate", "verify")
 BOOKING_WORDS = ("booking", "status", "expire", "expired", "confirmed")
+ACCOUNT_WORDS = (
+    "account",
+    "email",
+    "login",
+    "password",
+    "phone",
+    "profile",
+    "number",
+)
+SUPPORT_SCOPE_WORDS = (
+    AVAILABILITY_WORDS
+    + NOTIFICATION_WORDS
+    + TICKET_WORDS
+    + PAYMENT_WORDS
+    + BOOKING_WORDS
+    + ACCOUNT_WORDS
+    + (
+        "advance",
+        "app",
+        "cancel",
+        "cancellation",
+        "court",
+        "error",
+        "owner",
+        "policy",
+        "support",
+        "troubleshoot",
+    )
+)
+TYPO_MATCH_THRESHOLD = 0.78
+TOKEN_RE = re.compile(r"[a-z0-9]+")
 
 
 @dataclass(frozen=True)
@@ -77,15 +109,35 @@ def extract_entities(message: str) -> dict[str, str]:
     return entities
 
 
+def _tokens(message: str) -> list[str]:
+    return TOKEN_RE.findall(message.lower())
+
+
+def _similar_enough(left: str, right: str) -> bool:
+    if min(len(left), len(right)) < 4:
+        return left == right
+    return SequenceMatcher(None, left, right).ratio() >= TYPO_MATCH_THRESHOLD
+
+
+def _has_word(message_tokens: list[str], word: str) -> bool:
+    word_tokens = TOKEN_RE.findall(word.lower())
+    if not word_tokens:
+        return False
+    if len(word_tokens) > 1:
+        return " ".join(word_tokens) in " ".join(message_tokens)
+    target = word_tokens[0]
+    return any(_similar_enough(token, target) for token in message_tokens)
+
+
 def _has_any(message: str, words: tuple[str, ...]) -> bool:
-    lowered = message.lower()
-    return any(word in lowered for word in words)
+    message_tokens = _tokens(message)
+    return any(_has_word(message_tokens, word) for word in words)
 
 
 def _handoff_reason(message: str) -> str | None:
     lowered = message.lower()
     if re.search(
-        r"\banother customer\b|\bsomeone else\b|\bother user's\b|\bphone number\b",
+        r"\banother customer\b|\bsomeone else\b|\bother user's\b",
         lowered,
     ):
         return "privacy"
@@ -119,6 +171,23 @@ def route_message(message: str) -> RouteDecision:
         return RouteDecision(route="greeting", entities=entities)
     if SMALLTALK_CLOSE_RE.fullmatch(stripped):
         return RouteDecision(route="smalltalk_close", entities=entities)
+    lowered = stripped.lower()
+    if re.search(r"\b(who|whoa|what)\s+(are|r|re)\s+(you|u)\b", lowered):
+        return RouteDecision(route="bot_identity", entities=entities)
+    if re.search(r"\bwhat\s+can\s+(you|u)\s+do\b", lowered):
+        return RouteDecision(route="bot_identity", entities=entities)
+    if re.search(r"\b(who|what)\s+(am|m)\s+(i|me)\b", lowered):
+        return RouteDecision(route="user_identity", entities=entities)
+    if not entities and not _has_any(stripped, SUPPORT_SCOPE_WORDS):
+        return RouteDecision(route="out_of_scope", entities=entities)
+    if (
+        re.search(r"\bhow\s+do\s+i\b", stripped.lower())
+        or _has_any(stripped, ("change", "update", "edit", "replace", "modify"))
+    ) and _has_any(
+        stripped,
+        ("phone", "number", "email", "password", "account"),
+    ):
+        return RouteDecision(route="account_update", entities=entities)
 
     if entities.get("notification_id") or (
         entities.get("booking_id") and _has_any(stripped, NOTIFICATION_WORDS)
@@ -142,7 +211,7 @@ def route_message(message: str) -> RouteDecision:
         return RouteDecision(route="rag_policy", entities=entities)
     if entities.get("court_id") or _has_any(stripped, AVAILABILITY_WORDS):
         return RouteDecision(route="get_court_availability", entities=entities)
-    if _has_any(stripped, NOTIFICATION_WORDS) and "history" in stripped.lower():
+    if _has_any(stripped, NOTIFICATION_WORDS) and _has_any(stripped, ("history",)):
         return RouteDecision(route="get_notification_history", entities=entities)
     if _has_any(stripped, TICKET_WORDS) and re.search(
         r"\b(current|previous|find|search|open)\b",
@@ -152,9 +221,7 @@ def route_message(message: str) -> RouteDecision:
             entities = {**entities, "topic": "refund"}
         return RouteDecision(route="search_previous_tickets", entities=entities)
     if _has_any(stripped, PAYMENT_WORDS) and (
-        "status" in stripped.lower()
-        or "when" in stripped.lower()
-        or "delayed" in stripped.lower()
+        _has_any(stripped, ("status", "when", "delayed"))
     ):
         return RouteDecision(route="get_payment_status", entities=entities)
     return RouteDecision(route="rag_policy", entities=entities)

@@ -47,6 +47,12 @@ def test_clean_model_answer_removes_think_blocks_and_answer_prefix() -> None:
     assert answer == "Refunds need review."
 
 
+def test_clean_model_answer_censors_abusive_words() -> None:
+    answer = clean_model_answer("Answer: That answer is stupid and shit.")
+
+    assert answer == "That answer is s***** and s***."
+
+
 def test_source_names_are_unique_and_preserve_order() -> None:
     chunks = make_chunks() + [
         RetrievedChunk(
