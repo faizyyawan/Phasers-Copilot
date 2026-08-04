@@ -11,6 +11,7 @@ RUN pip install --no-cache-dir -r requirements-backend.txt
 
 COPY src ./src
 COPY knowledge-base ./knowledge-base
+COPY mock-data ./mock-data
 
 EXPOSE 8000
 

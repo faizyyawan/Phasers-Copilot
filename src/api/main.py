@@ -15,7 +15,6 @@ from qdrant_client import QdrantClient
 from src.generation.generator import (
     DEFAULT_OLLAMA_MODEL,
     DEFAULT_OLLAMA_URL,
-    DEFAULT_TIMEOUT_SECONDS,
 )
 from src.ingestion.index_documents import COLLECTION_NAME, run_indexing_pipeline
 from src.rag import RagResponse, answer_question
@@ -32,6 +31,7 @@ class ChatRequest(BaseModel):
 
     message: str = Field(..., min_length=1)
     top_k: int = Field(default=DEFAULT_TOP_K, ge=1, le=10)
+    debug: bool = False
 
 
 class RetrievedChunkResponse(BaseModel):
@@ -48,10 +48,13 @@ class ChatResponse(BaseModel):
     """Response body for a support chat turn."""
 
     answer: str
-    sources: list[str]
-    retrieved_chunks: list[RetrievedChunkResponse]
+    route: str
+    needs_handoff: bool
+    handoff_reason: str | None = None
     model: str
     elapsed_seconds: float
+    sources: list[str] | None = None
+    retrieved_chunks: list[RetrievedChunkResponse] | None = None
 
 
 class ComponentHealth(BaseModel):
@@ -120,7 +123,7 @@ def check_qdrant() -> ComponentHealth:
             return ComponentHealth(ok=True, detail=f"{count} indexed chunks")
         finally:
             client.close()
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001
         return ComponentHealth(ok=False, detail=str(exc))
 
 
@@ -144,7 +147,7 @@ def check_ollama() -> ComponentHealth:
                 detail=f"{OLLAMA_MODEL} not found in Ollama models",
             )
         return ComponentHealth(ok=True, detail=f"{OLLAMA_MODEL} available")
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001
         return ComponentHealth(ok=False, detail=str(exc))
 
 
@@ -174,7 +177,11 @@ def health() -> HealthResponse:
     )
 
 
-@app.post("/api/v1/support/chat", response_model=ChatResponse)
+@app.post(
+    "/api/v1/support/chat",
+    response_model=ChatResponse,
+    response_model_exclude_none=True,
+)
 def support_chat(request: ChatRequest) -> ChatResponse:
     """Answer one support question with local RAG."""
     message = request.message.strip()
@@ -206,12 +213,17 @@ def support_chat(request: ChatRequest) -> ChatResponse:
     except Exception as exc:
         raise HTTPException(status_code=500, detail=str(exc)) from exc
 
-    return ChatResponse(
+    payload = ChatResponse(
         answer=response.answer.answer,
-        sources=response.answer.sources,
-        retrieved_chunks=[
-            chunk_response(chunk) for chunk in response.retrieved_chunks
-        ],
+        route=response.route,
+        needs_handoff=response.needs_handoff,
+        handoff_reason=response.handoff_reason,
         model=response.answer.model,
         elapsed_seconds=perf_counter() - started_at,
     )
+    if request.debug:
+        payload.sources = response.answer.sources
+        payload.retrieved_chunks = [
+            chunk_response(chunk) for chunk in response.retrieved_chunks
+        ]
+    return payload

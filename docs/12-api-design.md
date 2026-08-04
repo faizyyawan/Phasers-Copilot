@@ -16,7 +16,8 @@ Request:
 {
   "conversation_id": "CONV-001",
   "message": "What is the status of booking BK-1001?",
-  "stream": false
+  "stream": false,
+  "debug": false
 }
 ```
 
@@ -24,13 +25,17 @@ Response:
 
 ```json
 {
-  "conversation_id": "CONV-001",
   "answer": "Booking BK-1001 is confirmed.",
-  "sources": [],
-  "tool_calls": [{"tool": "get_booking_status", "status": "success"}],
-  "needs_human": false
+  "route": "get_booking_status",
+  "needs_handoff": false,
+  "model": "built-in",
+  "elapsed_seconds": 0.02
 }
 ```
+
+Customer responses hide sources, retrieved chunks, and tool traces by default. A
+debug request may include sources and retrieved chunks for local development or
+admin review.
 
 Validation errors: missing message, invalid conversation ID, unauthorized booking reference.
 
@@ -81,4 +86,3 @@ Returns service health without exposing secrets.
   }
 }
 ```
-

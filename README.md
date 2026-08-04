@@ -47,9 +47,9 @@ QLoRA should improve behavior: intent classification, entity extraction, query r
 
 ## Current Project Status
 
-This repository currently contains documentation, fictional support policies, mock transactional data, evaluation datasets, fine-tuning sample formats, and the first implementation pieces for a local RAG pipeline. Markdown loading, heading-aware chunking, local embedding generation, and persistent Qdrant indexing are implemented and tested.
+This repository currently contains documentation, fictional support policies, mock transactional data, evaluation datasets, fine-tuning sample formats, and a Dockerized local support chatbot. Markdown loading, heading-aware chunking, embedding generation, Qdrant indexing, dense retrieval, grounded answer generation, FastAPI, Streamlit UI, rule-based routing, and mock read-only support lookups are implemented and tested.
 
-Dense retrieval, grounded answer generation, FastAPI, LangGraph orchestration, structured tools, and the UI are not implemented yet.
+LangGraph orchestration, PostgreSQL-backed structured tools, richer evaluation dashboards, Next.js production UI, and QLoRA experiments are planned later phases.
 
 ## What You Will Build Yourself
 
@@ -113,7 +113,7 @@ embeds-support-copilot/
 
 ## First Milestone
 
-Build a basic RAG MVP that loads Markdown knowledge documents, chunks them, embeds them, stores them in a vector database, retrieves relevant chunks, and generates grounded answers with source citations.
+Build a basic support chatbot MVP that loads Markdown knowledge documents, chunks them, embeds them, stores them in a vector database, retrieves relevant chunks, and generates grounded customer-facing answers. Sources and retrieval chunks are hidden from customers by default and available only through debug traces.
 
 Do not skip directly to LangGraph or QLoRA. A weak baseline RAG system is the foundation you will evaluate and improve.
 
@@ -216,6 +216,9 @@ Then start the app stack:
 docker compose up --build
 ```
 
+Use `--build` after code changes so Docker picks up the latest backend and
+frontend files.
+
 Open [http://localhost:8501](http://localhost:8501) and ask a question such as:
 
 ```text
@@ -237,4 +240,4 @@ deactivate
 
 ## Definition of Done
 
-See [docs/20-definition-of-done.md](docs/20-definition-of-done.md). At a high level, the project is done when it can route policy questions to RAG, transactional questions to tools, escalate sensitive or uncertain cases, cite evidence, pass evaluation targets, and preserve user privacy.
+See [docs/20-definition-of-done.md](docs/20-definition-of-done.md). At a high level, the project is done when it can route policy questions to RAG, transactional questions to read-only tools, escalate sensitive or uncertain cases, keep customer answers natural, expose debug traces only when requested, pass evaluation targets, and preserve user privacy.

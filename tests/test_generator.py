@@ -40,7 +40,8 @@ def test_build_grounded_prompt_includes_question_and_evidence() -> None:
 
 def test_clean_model_answer_removes_think_blocks_and_answer_prefix() -> None:
     answer = clean_model_answer(
-        "<think>I should inspect evidence.</think>\n\nAnswer: Refunds need review."
+        "<think>I should inspect evidence.</think>\n\n"
+        "Answer: Refunds need review. (refund-policy.md)"
     )
 
     assert answer == "Refunds need review."

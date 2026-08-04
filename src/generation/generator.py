@@ -2,9 +2,9 @@
 
 from __future__ import annotations
 
+import re
 from collections.abc import Sequence
 from dataclasses import dataclass
-import re
 from typing import Any
 
 import requests
@@ -16,6 +16,11 @@ DEFAULT_OLLAMA_URL = "http://localhost:11434"
 DEFAULT_OLLAMA_MODEL = "qwen3:8b"
 DEFAULT_TIMEOUT_SECONDS = 120
 THINK_BLOCK_RE = re.compile(r"<think>.*?</think>", re.IGNORECASE | re.DOTALL)
+SOURCE_LABEL_RE = re.compile(
+    r"\s*(?:\(|\[)?(?:source|sources|evidence|chunk)s?:?[^.\n]*\.md(?:\)|\])?",
+    re.IGNORECASE,
+)
+MARKDOWN_FILE_RE = re.compile(r"\s*\(?[A-Za-z0-9_-]+\.md\)?")
 
 
 @dataclass(frozen=True)
@@ -41,6 +46,8 @@ def clean_model_answer(answer: str) -> str:
     """Remove model-only artifacts from customer-visible answer text."""
     cleaned = THINK_BLOCK_RE.sub("", answer)
     cleaned = re.sub(r"^\s*Answer:\s*", "", cleaned, flags=re.IGNORECASE)
+    cleaned = SOURCE_LABEL_RE.sub("", cleaned)
+    cleaned = MARKDOWN_FILE_RE.sub("", cleaned)
     cleaned = cleaned.strip()
     if not cleaned:
         raise RuntimeError("Ollama response did not include non-empty customer text.")
@@ -76,7 +83,7 @@ def ollama_chat(
 
     message = payload.get("message")
     if not isinstance(message, dict):
-        raise RuntimeError("Ollama response did not include a message object.")
+        raise TypeError("Ollama response did not include a message object.")
 
     content = message.get("content")
     if not isinstance(content, str) or not content.strip():

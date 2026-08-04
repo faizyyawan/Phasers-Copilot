@@ -6,6 +6,8 @@
 - Chunks include metadata and source file names.
 - Dense retrieval returns relevant documents.
 - Answers are grounded in retrieved chunks.
+- Customer-facing answers hide source files and chunks by default.
+- Debug traces expose sources and chunks only when explicitly requested.
 - Unsupported questions are refused.
 - Basic retrieval and answer tests pass.
 
@@ -47,9 +49,8 @@
 ## Full Project
 
 - RAG, tools, LangGraph, evaluation, UI, backend, persistence, security, and observability work together.
-- The system cites sources for policy answers.
+- The system keeps policy answers grounded and exposes source traces only in debug/admin views.
 - The system uses tools for current transactional answers.
 - The system escalates uncertain or sensitive cases.
 - Final evaluation results are documented.
 - Practice-policy limitations are clear.
-

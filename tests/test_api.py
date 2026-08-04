@@ -58,6 +58,7 @@ def test_chat_returns_answer_sources_and_retrieved_chunks(monkeypatch):
                 sources=["payment-policy.md"],
             ),
             retrieved_chunks=[chunk],
+            route="rag_policy",
         )
 
     monkeypatch.setattr(api_main, "answer_question", fake_answer_question)
@@ -73,6 +74,50 @@ def test_chat_returns_answer_sources_and_retrieved_chunks(monkeypatch):
     assert response.status_code == 200
     payload = response.json()
     assert payload["answer"] == "Customers must pay 30% advance."
+    assert payload["route"] == "rag_policy"
+    assert payload["needs_handoff"] is False
+    assert "sources" not in payload
+    assert "retrieved_chunks" not in payload
+
+
+def test_chat_returns_debug_sources_and_retrieved_chunks(monkeypatch):
+    def fake_answer_question(**_: object) -> RagResponse:
+        chunk = RetrievedChunk(
+            text="Customers must submit a 30% advance payment.",
+            metadata={
+                "source": "payment-policy.md",
+                "chunk_id": "payment-policy-chunk-003",
+                "header_2": "Advance Payment",
+            },
+            score=0.8,
+        )
+        return RagResponse(
+            question="How much advance must I pay?",
+            answer=GeneratedAnswer(
+                answer="Customers must pay 30% advance.",
+                model="qwen3:8b",
+                sources=["payment-policy.md"],
+            ),
+            retrieved_chunks=[chunk],
+            route="rag_policy",
+        )
+
+    monkeypatch.setattr(api_main, "answer_question", fake_answer_question)
+
+    from fastapi.testclient import TestClient
+
+    client = TestClient(api_main.app)
+    response = client.post(
+        "/api/v1/support/chat",
+        json={
+            "message": "How much advance must I pay?",
+            "top_k": 1,
+            "debug": True,
+        },
+    )
+
+    assert response.status_code == 200
+    payload = response.json()
     assert payload["sources"] == ["payment-policy.md"]
     assert payload["retrieved_chunks"][0]["source"] == "payment-policy.md"
     assert payload["retrieved_chunks"][0]["section"] == "Advance Payment"
@@ -94,5 +139,6 @@ def test_chat_replies_to_greeting_without_retrieval(monkeypatch):
     assert response.status_code == 200
     payload = response.json()
     assert "Hi!" in payload["answer"]
-    assert payload["sources"] == []
-    assert payload["retrieved_chunks"] == []
+    assert payload["route"] == "greeting"
+    assert "sources" not in payload
+    assert "retrieved_chunks" not in payload
