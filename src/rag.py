@@ -66,6 +66,7 @@ class RagResponse:
     route: str
     needs_handoff: bool = False
     handoff_reason: str | None = None
+    routing_backend: str = "rule_router"
 
 
 def _built_in_response(
@@ -86,6 +87,7 @@ def _built_in_response(
         route=decision.route,
         needs_handoff=needs_handoff,
         handoff_reason=decision.handoff_reason,
+        routing_backend=decision.backend,
     )
 
 
@@ -108,6 +110,7 @@ def answer_question(
             retrieved_chunks=[],
             route="abusive_language",
             needs_handoff=False,
+            routing_backend="built_in_rule",
         )
 
     decision = route_message(question)
@@ -237,6 +240,7 @@ def answer_question(
         answer=answer,
         retrieved_chunks=chunks,
         route=decision.route,
+        routing_backend=decision.backend,
     )
 
 

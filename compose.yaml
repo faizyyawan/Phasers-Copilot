@@ -32,6 +32,8 @@ services:
       OLLAMA_MODEL: qwen3:8b
       AUTO_INDEX_ON_START: "true"
       HF_HOME: /cache/huggingface
+      ROUTER_USE_FINE_TUNED: "true"
+      ROUTER_ADAPTER_DIR: /app/artifacts/router-qlora-run1
     extra_hosts:
       - "host.docker.internal:host-gateway"
     volumes:

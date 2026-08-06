@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from html import escape
 import os
 from typing import Any
 
@@ -17,7 +18,7 @@ STARTER_PROMPTS = [
 ]
 
 st.set_page_config(
-    page_title="Embeds Support Copilot",
+    page_title="Phasers Support Copilot",
     page_icon=":tennis:",
     layout="wide",
     initial_sidebar_state="collapsed",
@@ -27,19 +28,26 @@ st.markdown(
     """
     <style>
     :root {
-        --page-bg: #f5f7fa;
-        --panel-bg: #ffffff;
-        --ink: #172033;
-        --muted: #5c6b82;
-        --line: #dde3ec;
-        --accent: #0f766e;
-        --accent-strong: #115e59;
-        --accent-soft: #e1f5f1;
-        --warn-soft: #fff7df;
+        --page-bg: #050505;
+        --page-glow: rgba(255, 255, 255, 0.06);
+        --panel-bg: rgba(15, 15, 18, 0.92);
+        --panel-strong: rgba(19, 19, 24, 0.98);
+        --panel-soft: rgba(255, 255, 255, 0.045);
+        --ink: #f5f7fb;
+        --muted: #98a1b3;
+        --line: rgba(255, 255, 255, 0.14);
+        --line-strong: rgba(255, 255, 255, 0.25);
+        --accent: #ffffff;
+        --accent-soft: rgba(255, 255, 255, 0.08);
+        --user-bg: rgba(255, 255, 255, 0.06);
+        --warn-soft: rgba(255, 214, 102, 0.12);
+        --shadow: 0 24px 80px rgba(0, 0, 0, 0.38);
     }
 
     .stApp {
-        background: linear-gradient(180deg, #fbfcfe 0%, var(--page-bg) 48%, #eef2f7 100%);
+        background:
+            radial-gradient(circle at top, rgba(255, 255, 255, 0.08), transparent 32%),
+            linear-gradient(180deg, #111111 0%, #070707 28%, var(--page-bg) 100%);
         color: var(--ink);
     }
 
@@ -55,7 +63,7 @@ st.markdown(
     }
 
     [data-testid="stSidebar"] {
-        background: #ffffff;
+        background: #0a0a0d;
         border-right: 1px solid var(--line);
     }
 
@@ -65,150 +73,255 @@ st.markdown(
     }
 
     .block-container {
-        max-width: 1040px;
-        padding-top: 3.75rem;
+        max-width: 960px;
+        padding-top: 3.2rem;
         padding-bottom: 8rem;
     }
 
     .hero {
         border: 1px solid var(--line);
-        border-radius: 8px;
+        border-radius: 32px;
         background:
-            linear-gradient(135deg, rgba(15, 118, 110, 0.13), rgba(56, 189, 248, 0.11)),
-            #ffffff;
-        padding: 1rem 1.2rem;
-        margin: 0 0 0.9rem;
-        box-shadow: 0 18px 42px rgba(15, 23, 42, 0.06);
+            linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02)),
+            var(--panel-strong);
+        padding: 2.6rem 2rem 1.9rem;
+        margin: 0 auto 1rem;
+        box-shadow: var(--shadow);
         overflow: hidden;
+        text-align: center;
+        position: relative;
+    }
+
+    .brand-lockup {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .brand-mark {
+        width: 84px;
+        height: 84px;
+        border: 1.5px solid rgba(255, 255, 255, 0.92);
+        border-radius: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #ffffff;
+        font-size: 2rem;
+        font-weight: 700;
+        letter-spacing: -0.08em;
+        background: rgba(255, 255, 255, 0.02);
+        box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.03);
     }
 
     .hero h1 {
         color: var(--ink);
-        font-size: 1.8rem;
-        line-height: 1.12;
+        font-size: 2.45rem;
+        line-height: 1.02;
         margin: 0;
-        letter-spacing: 0;
+        letter-spacing: -0.06em;
+        font-weight: 650;
     }
 
     .hero p {
         color: var(--muted);
-        font-size: 0.96rem;
-        line-height: 1.45;
-        margin: 0.45rem 0 0;
-        max-width: 760px;
+        font-size: 0.98rem;
+        line-height: 1.6;
+        margin: 0.1rem auto 0;
+        max-width: 610px;
     }
 
     .hero-meta {
         display: flex;
+        justify-content: center;
         flex-wrap: wrap;
-        gap: 0.5rem;
-        margin-top: 0.8rem;
+        gap: 0.6rem;
+        margin-top: 1rem;
     }
 
     .hero-meta span {
-        background: rgba(255, 255, 255, 0.8);
+        background: rgba(255, 255, 255, 0.04);
         border: 1px solid var(--line);
         border-radius: 999px;
-        color: var(--ink);
-        font-size: 0.82rem;
+        color: #d9deea;
+        font-size: 0.76rem;
         font-weight: 600;
-        padding: 0.35rem 0.65rem;
+        padding: 0.38rem 0.72rem;
+        letter-spacing: 0.01em;
+    }
+
+    .quick-actions-shell {
+        margin: 1.05rem 0 0.8rem;
+        padding: 1rem 1rem 1.1rem;
+        border-radius: 24px;
+        border: 1px solid var(--line);
+        background: var(--panel-bg);
+        box-shadow: 0 18px 50px rgba(0, 0, 0, 0.22);
     }
 
     .quick-actions {
-        margin: 0.75rem 0 0.75rem;
+        margin: 0;
     }
 
     .quick-actions p {
         color: var(--muted);
-        font-size: 0.9rem;
-        margin: 0 0 0.45rem;
+        font-size: 0.78rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        margin: 0 0 0.8rem;
     }
 
     .stButton > button {
-        border: 1px solid #d5dbe5;
-        border-radius: 8px;
-        color: var(--ink);
-        background: #ffffff;
-        min-height: 3rem;
-        padding: 0.55rem 0.75rem;
-        transition: all 120ms ease;
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        color: #edf2ff;
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.015));
+        min-height: 2.6rem;
+        padding: 0.58rem 0.8rem;
+        transition: all 150ms ease;
         white-space: normal;
+        font-size: 0.9rem;
+        box-shadow: none;
     }
 
     .stButton > button:hover {
-        border-color: var(--accent);
-        color: var(--accent-strong);
-        box-shadow: 0 8px 22px rgba(15, 118, 110, 0.10);
+        border-color: var(--line-strong);
+        color: #ffffff;
+        transform: translateY(-1px);
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.025));
     }
 
-    [data-testid="stChatMessage"] {
+    .chat-shell {
+        margin-top: 0.55rem;
+    }
+
+    .message-row {
+        display: flex;
+        gap: 0.9rem;
+        align-items: flex-start;
+        margin-bottom: 0.9rem;
+    }
+
+    .message-row.user {
+        flex-direction: row-reverse;
+    }
+
+    .message-avatar {
+        flex: 0 0 46px;
+        width: 46px;
+        height: 46px;
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
         border: 1px solid var(--line);
-        border-radius: 8px;
-        background: rgba(255, 255, 255, 0.92);
-        box-shadow: 0 10px 30px rgba(15, 23, 42, 0.04);
-        margin-bottom: 0.75rem;
-        padding: 0.85rem 1rem;
+        background: rgba(255, 255, 255, 0.045);
+        color: #ffffff;
+        font-size: 1rem;
+        font-weight: 700;
+        letter-spacing: -0.04em;
     }
 
-    [data-testid="stChatMessage"] p {
+    .message-row.user .message-avatar {
+        background: rgba(255, 255, 255, 0.09);
+        color: #e7ebf5;
+    }
+
+    .message-body {
+        flex: 1 1 auto;
+        border-radius: 24px;
+        border: 1px solid var(--line);
+        background: var(--panel-bg);
+        padding: 1rem 1.05rem;
+        box-shadow: 0 14px 34px rgba(0, 0, 0, 0.18);
+    }
+
+    .message-row.user .message-body {
+        background: var(--user-bg);
+    }
+
+    .message-role {
+        color: #e8ecf7;
+        font-size: 0.78rem;
+        font-weight: 600;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        margin-bottom: 0.45rem;
+    }
+
+    .message-content {
         color: var(--ink);
-        line-height: 1.55;
+        line-height: 1.65;
+        font-size: 0.98rem;
     }
 
-    [data-testid="stChatMessage"]:has([data-testid="chatAvatarIcon-user"]) {
-        background: #f0fdfa;
-        border-color: #bfe8df;
+    .message-content p {
+        margin: 0;
+    }
+
+    .message-content p + p {
+        margin-top: 0.75rem;
     }
 
     [data-testid="stChatInput"] {
-        max-width: 940px;
+        max-width: 960px;
         margin: 0 auto;
-        min-height: 3.25rem !important;
+        min-height: 3.35rem !important;
     }
 
     [data-testid="stChatInput"] > div {
-        min-height: 3.25rem !important;
-        padding: 0.35rem 0.45rem !important;
+        min-height: 3.35rem !important;
+        padding: 0.45rem 0.5rem !important;
         position: relative;
+        border-radius: 24px !important;
+        background: rgba(10, 10, 12, 0.98) !important;
+        border: 1px solid var(--line) !important;
+        box-shadow: 0 24px 60px rgba(0, 0, 0, 0.28) !important;
     }
 
     [data-testid="stChatInput"] textarea {
-        background: #ffffff !important;
+        background: rgba(255, 255, 255, 0.03) !important;
         color: var(--ink) !important;
-        border: 1px solid #cfd7e3 !important;
-        border-radius: 8px !important;
-        height: 2.45rem !important;
-        min-height: 2.45rem !important;
+        border: 1px solid rgba(255, 255, 255, 0.08) !important;
+        border-radius: 18px !important;
+        height: 2.55rem !important;
+        min-height: 2.55rem !important;
         max-height: 5.5rem !important;
-        padding-right: 3rem !important;
+        padding-right: 3.4rem !important;
     }
 
     [data-testid="stChatInput"] textarea:focus {
-        border-color: var(--accent) !important;
-        box-shadow: 0 0 0 2px rgba(15, 118, 110, 0.12) !important;
+        border-color: rgba(255, 255, 255, 0.28) !important;
+        box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.05) !important;
     }
 
     [data-testid="stChatInput"] button {
         position: absolute !important;
-        right: 0.75rem !important;
+        right: 0.8rem !important;
         top: 50% !important;
         transform: translateY(-50%) !important;
         margin: 0 !important;
+        border-radius: 16px !important;
+        background: #ffffff !important;
+        color: #050505 !important;
+        border: none !important;
+        min-width: 2.65rem !important;
+        height: 2.65rem !important;
     }
 
     div[data-testid="stExpander"] {
         border: 1px solid var(--line);
-        border-radius: 8px;
-        background: #ffffff;
+        border-radius: 18px;
+        background: rgba(255, 255, 255, 0.03);
     }
 
     .debug-note {
-        border-left: 4px solid var(--accent);
+        border-left: 4px solid #ffffff;
         background: var(--warn-soft);
-        padding: 0.75rem 0.9rem;
-        border-radius: 8px;
-        color: #713f12;
+        padding: 0.85rem 0.95rem;
+        border-radius: 16px;
+        color: #f7e4a5;
         margin-top: 0.65rem;
     }
 
@@ -216,30 +329,42 @@ st.markdown(
         .block-container {
             padding-left: 0.9rem;
             padding-right: 0.9rem;
-            padding-top: 3.5rem;
+            padding-top: 2.8rem;
         }
 
         .hero {
-            padding: 0.8rem 0.95rem;
+            padding: 1.8rem 1rem 1.35rem;
+            border-radius: 28px;
+        }
+
+        .brand-mark {
+            width: 72px;
+            height: 72px;
+            border-radius: 20px;
+            font-size: 1.7rem;
         }
 
         .hero h1 {
-            font-size: 1.5rem;
-            line-height: 1.18;
+            font-size: 1.8rem;
+            line-height: 1.08;
         }
 
-        .hero p,
+        .hero p {
+            font-size: 0.9rem;
+        }
+
         .hero-meta {
-            display: none;
+            gap: 0.45rem;
         }
 
-        .quick-actions {
-            margin: 0.45rem 0 0.35rem;
+        .quick-actions-shell {
+            padding: 0.85rem 0.85rem 0.95rem;
         }
 
         .stButton > button {
-            min-height: 2.7rem;
-            padding: 0.45rem 0.6rem;
+            min-height: 2.5rem;
+            padding: 0.45rem 0.65rem;
+            font-size: 0.84rem;
         }
 
         [data-testid="stHorizontalBlock"] {
@@ -252,6 +377,18 @@ st.markdown(
 
         [data-testid="column"] {
             width: 100% !important;
+        }
+
+        .message-avatar {
+            width: 40px;
+            height: 40px;
+            flex-basis: 40px;
+            border-radius: 14px;
+        }
+
+        .message-body {
+            border-radius: 20px;
+            padding: 0.9rem;
         }
     }
     </style>
@@ -281,6 +418,26 @@ def ask_backend(message: str, debug: bool, top_k: int = 3) -> dict[str, Any]:
     )
     response.raise_for_status()
     return response.json()
+
+
+def render_message(role: str, content: str) -> None:
+    """Render one branded chat message."""
+    avatar = "P" if role == "assistant" else "You"
+    label = "Phasers Support Copilot" if role == "assistant" else "You"
+    css_role = "assistant" if role == "assistant" else "user"
+    safe_content = escape(content).replace("\n", "<br>")
+    st.markdown(
+        (
+            f'<div class="message-row {css_role}">'
+            f'<div class="message-avatar">{avatar}</div>'
+            f'<div class="message-body">'
+            f'<div class="message-role">{label}</div>'
+            f'<div class="message-content">{safe_content}</div>'
+            "</div>"
+            "</div>"
+        ),
+        unsafe_allow_html=True,
+    )
 
 
 if "messages" not in st.session_state:
@@ -338,31 +495,38 @@ with st.sidebar:
 st.markdown(
     """
     <section class="hero">
-        <h1>Embeds Support Copilot</h1>
-        <p>
-            Ask clear support questions and get grounded answers for bookings,
-            payments, refunds, cancellations, accounts, notifications, and court owner workflows.
-        </p>
-        <div class="hero-meta">
-            <span>Support chat</span>
-            <span>Policies + guides</span>
-            <span>Optional debug traces</span>
+        <div class="brand-lockup">
+            <div class="brand-mark">P</div>
+            <h1>Phasers Support Copilot</h1>
+            <p>
+                Refined support for bookings, payments, refunds, cancellations,
+                account help, notifications, and owner workflows.
+            </p>
+            <div class="hero-meta">
+                <span>Support chat</span>
+                <span>Policy grounded</span>
+                <span>Optional debug traces</span>
+            </div>
         </div>
     </section>
     """,
     unsafe_allow_html=True,
 )
 
-st.markdown('<div class="quick-actions"><p>Try a common question</p></div>', unsafe_allow_html=True)
+st.markdown(
+    '<div class="quick-actions-shell"><div class="quick-actions"><p>Try a common question</p></div></div>',
+    unsafe_allow_html=True,
+)
 prompt_cols = st.columns(2)
 for index, starter in enumerate(STARTER_PROMPTS):
     with prompt_cols[index % 2]:
         if st.button(starter, use_container_width=True):
             st.session_state.starter_prompt = starter
 
+st.markdown('<div class="chat-shell">', unsafe_allow_html=True)
 for message in st.session_state.messages:
-    with st.chat_message(message["role"]):
-        st.markdown(message["content"])
+    render_message(message["role"], message["content"])
+st.markdown("</div>", unsafe_allow_html=True)
 
 typed_prompt = st.chat_input("Ask a support question")
 prompt = typed_prompt.strip() if typed_prompt else ""
@@ -372,18 +536,18 @@ if st.session_state.starter_prompt:
 
 if prompt:
     st.session_state.messages.append({"role": "user", "content": prompt})
-    with st.chat_message("user"):
-        st.markdown(prompt)
+    render_message("user", prompt)
 
-    with st.chat_message("assistant"), st.spinner("Searching the knowledge base..."):
+    with st.spinner("Searching the knowledge base..."):
         try:
             result = ask_backend(prompt, debug=debug, top_k=top_k)
-            st.markdown(result["answer"])
+            render_message("assistant", result["answer"])
             if debug:
                 st.markdown(
                     (
                         '<div class="debug-note">'
                         f"Route: <strong>{result['route']}</strong> | "
+                        f"Router: <strong>{result.get('routing_backend', 'unknown')}</strong> | "
                         f"Model: <strong>{result['model']}</strong> | "
                         f"Elapsed: <strong>{result['elapsed_seconds']:.2f}s</strong>"
                         "</div>"

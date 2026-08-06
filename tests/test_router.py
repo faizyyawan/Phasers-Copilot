@@ -1,5 +1,7 @@
 """Tests for support route and entity detection."""
 
+import pytest
+
 from src.routing.router import route_message
 
 
@@ -94,3 +96,39 @@ def test_identity_questions_route_to_fixed_answers() -> None:
     assert route_message("whoa re u").route == "bot_identity"
     assert route_message("what can u do").route == "bot_identity"
     assert route_message("who am i").route == "user_identity"
+
+
+def test_fine_tuned_router_result_is_used_when_available(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    from src.routing import router as router_module
+
+    monkeypatch.setattr(
+        router_module,
+        "_route_with_fine_tuned_model",
+        lambda _: router_module.RouteDecision(
+            route="search_previous_tickets",
+            entities={"ticket_id": "TCK-4008"},
+        ),
+    )
+
+    decision = route_message("Ticket TCK-4008 status?")
+
+    assert decision.route == "search_previous_tickets"
+    assert decision.entities == {"ticket_id": "TCK-4008"}
+
+
+def test_invalid_fine_tuned_router_result_falls_back_to_rules(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    from src.routing import router as router_module
+
+    monkeypatch.setattr(
+        router_module,
+        "_route_with_fine_tuned_model",
+        lambda _: None,
+    )
+
+    decision = route_message("Did payment PAY-2001 verify?")
+
+    assert decision.route == "get_payment_status"

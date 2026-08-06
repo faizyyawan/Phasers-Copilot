@@ -12,6 +12,7 @@ RUN pip install --no-cache-dir -r requirements-backend.txt
 COPY src ./src
 COPY knowledge-base ./knowledge-base
 COPY mock-data ./mock-data
+COPY artifacts/router-qlora-run1 ./artifacts/router-qlora-run1
 
 EXPOSE 8000
 

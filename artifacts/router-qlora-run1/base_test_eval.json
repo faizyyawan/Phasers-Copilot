@@ -1,0 +1,265 @@
+{
+  "metrics": {
+    "total": 10,
+    "valid_json_rate": 1.0,
+    "exact_match_rate": 0.0,
+    "route_accuracy": 0.0,
+    "intent_accuracy": 0.1,
+    "escalation_accuracy": 0.6,
+    "adapter_dir": null,
+    "model_name": "Qwen/Qwen2.5-1.5B-Instruct"
+  },
+  "predictions": [
+    {
+      "id": "FT-043",
+      "raw_output": "```json\n{\n  \"intent\": \"information_request\",\n  \"entities\": [\n    {\n      \"entity\": \"booking_status\",\n      \"type\": \"keyword\"\n    }\n  ],\n  \"route\": \"confirmation_and_booking_status\",\n  \"requires_escalation\": false,\n  \"rewrite\": null,\n  \"refusal_reason\": null\n}\n```",
+      "parsed_output": {
+        "intent": "information_request",
+        "entities": [
+          {
+            "entity": "booking_status",
+            "type": "keyword"
+          }
+        ],
+        "route": "confirmation_and_booking_status",
+        "requires_escalation": false,
+        "rewrite": null,
+        "refusal_reason": null
+      },
+      "expected": {
+        "intent": "policy_question",
+        "entities": {},
+        "route": "rag_search",
+        "requires_escalation": false,
+        "rewrite": "confirmed booking status meaning",
+        "refusal_reason": null
+      }
+    },
+    {
+      "id": "FT-042",
+      "raw_output": "```json\n{\n  \"intent\": \"booking\",\n  \"entities\": {\n    \"advance_amount\": \"court\"\n  },\n  \"route\": \"book_court\",\n  \"requires_escalation\": false,\n  \"rewrite\": \"Please provide the advance amount required for booking a court.\",\n  \"refusal_reason\": \"\"\n}\n```",
+      "parsed_output": {
+        "intent": "booking",
+        "entities": {
+          "advance_amount": "court"
+        },
+        "route": "book_court",
+        "requires_escalation": false,
+        "rewrite": "Please provide the advance amount required for booking a court.",
+        "refusal_reason": ""
+      },
+      "expected": {
+        "intent": "policy_question",
+        "entities": {},
+        "route": "rag_search",
+        "requires_escalation": false,
+        "rewrite": "advance payment amount for court booking",
+        "refusal_reason": null
+      }
+    },
+    {
+      "id": "FT-092",
+      "raw_output": "```json\n{\n  \"intent\": \"payment dispute\",\n  \"entities\": {\n    \"payment_id\": \"PAY-2050\"\n  },\n  \"route\": \"agent_request\",\n  \"requires_escalation\": false,\n  \"rewrite\": null,\n  \"refusal_reason\": null\n}\n```",
+      "parsed_output": {
+        "intent": "payment dispute",
+        "entities": {
+          "payment_id": "PAY-2050"
+        },
+        "route": "agent_request",
+        "requires_escalation": false,
+        "rewrite": null,
+        "refusal_reason": null
+      },
+      "expected": {
+        "intent": "payment_status",
+        "entities": {
+          "payment_id": "PAY-2050"
+        },
+        "route": "get_payment_status",
+        "requires_escalation": true,
+        "rewrite": null,
+        "refusal_reason": null
+      }
+    },
+    {
+      "id": "FT-010",
+      "raw_output": "```json\n{\n  \"intent\": \"payment_issue\",\n  \"entities\": [\n    {\n      \"entity\": \"BK-1007\",\n      \"type\": \"booking_id\"\n    }\n  ],\n  \"route\": \"payment_processing\",\n  \"requires_escalation\": false,\n  \"rewrite\": \"I'm sorry to hear that your payment has been deducted, please check if you have already canceled or refunded it.\",\n  \"refusal_reason\": \"Payment issue - Please contact our customer service for further assistance.\"\n}\n```",
+      "parsed_output": {
+        "intent": "payment_issue",
+        "entities": [
+          {
+            "entity": "BK-1007",
+            "type": "booking_id"
+          }
+        ],
+        "route": "payment_processing",
+        "requires_escalation": false,
+        "rewrite": "I'm sorry to hear that your payment has been deducted, please check if you have already canceled or refunded it.",
+        "refusal_reason": "Payment issue - Please contact our customer service for further assistance."
+      },
+      "expected": {
+        "intent": "payment_status",
+        "entities": {
+          "booking_id": "BK-1007"
+        },
+        "route": "get_payment_status",
+        "requires_escalation": true,
+        "rewrite": null,
+        "refusal_reason": null
+      }
+    },
+    {
+      "id": "FT-066",
+      "raw_output": "```json\n{\n  \"intent\": \"database operation\",\n  \"entities\": [],\n  \"route\": \"delete booking record\",\n  \"requires_escalation\": false,\n  \"rewrite\": \"Delete booking with ID 'BK-1001'\",\n  \"refusal_reason\": \"\"\n}\n```",
+      "parsed_output": {
+        "intent": "database operation",
+        "entities": [],
+        "route": "delete booking record",
+        "requires_escalation": false,
+        "rewrite": "Delete booking with ID 'BK-1001'",
+        "refusal_reason": ""
+      },
+      "expected": {
+        "intent": "unsupported_request",
+        "entities": {
+          "booking_id": "BK-1001"
+        },
+        "route": "human_escalation",
+        "requires_escalation": true,
+        "rewrite": null,
+        "refusal_reason": "unrestricted_sql_not_allowed"
+      }
+    },
+    {
+      "id": "FT-051",
+      "raw_output": "```json\n{\n  \"intent\": \"request\",\n  \"entities\": {\n    \"date\": \"2026-09-10\"\n  },\n  \"route\": \"process_request\",\n  \"requires_escalation\": false,\n  \"rewrite\": null,\n  \"refusal_reason\": null\n}\n```",
+      "parsed_output": {
+        "intent": "request",
+        "entities": {
+          "date": "2026-09-10"
+        },
+        "route": "process_request",
+        "requires_escalation": false,
+        "rewrite": null,
+        "refusal_reason": null
+      },
+      "expected": {
+        "intent": "court_availability",
+        "entities": {
+          "court_id": "CRT-005",
+          "date": "2026-09-10",
+          "time": "19:30"
+        },
+        "route": "get_court_availability",
+        "requires_escalation": false,
+        "rewrite": null,
+        "refusal_reason": null
+      }
+    },
+    {
+      "id": "FT-002",
+      "raw_output": "```json\n{\n  \"intent\": \"information_request\",\n  \"entities\": [\n    {\n      \"entity\": \"BK-1001\",\n      \"type\": \"booking_reference\"\n    }\n  ],\n  \"route\": \"bookings_status\",\n  \"requires_escalation\": false,\n  \"rewrite\": \"I'm here to help you with your booking, BK-1001. Could you please provide more details so I can assist you better?\",\n  \"refusal_reason\": null\n}\n```",
+      "parsed_output": {
+        "intent": "information_request",
+        "entities": [
+          {
+            "entity": "BK-1001",
+            "type": "booking_reference"
+          }
+        ],
+        "route": "bookings_status",
+        "requires_escalation": false,
+        "rewrite": "I'm here to help you with your booking, BK-1001. Could you please provide more details so I can assist you better?",
+        "refusal_reason": null
+      },
+      "expected": {
+        "intent": "booking_status",
+        "entities": {
+          "booking_id": "BK-1001"
+        },
+        "route": "get_booking_status",
+        "requires_escalation": false,
+        "rewrite": null,
+        "refusal_reason": null
+      }
+    },
+    {
+      "id": "FT-071",
+      "raw_output": "```json\n{\n  \"intent\": \"legal_action\",\n  \"entities\": [\n    {\n      \"entity\": \"rain_cancellation\"\n    }\n  ],\n  \"route\": \"legal_action_route\",\n  \"requires_escalation\": false,\n  \"rewrite\": null,\n  \"refusal_reason\": null\n}\n```",
+      "parsed_output": {
+        "intent": "legal_action",
+        "entities": [
+          {
+            "entity": "rain_cancellation"
+          }
+        ],
+        "route": "legal_action_route",
+        "requires_escalation": false,
+        "rewrite": null,
+        "refusal_reason": null
+      },
+      "expected": {
+        "intent": "unsupported_request",
+        "entities": {},
+        "route": "human_escalation",
+        "requires_escalation": true,
+        "rewrite": null,
+        "refusal_reason": "unsupported_legal_claim"
+      }
+    },
+    {
+      "id": "FT-016",
+      "raw_output": "```json\n{\n  \"intent\": \"query\",\n  \"entities\": [\n    {\n      \"entity\": \"ticket_id\",\n      \"value\": \"TCK-4008\"\n    }\n  ],\n  \"route\": \"status\",\n  \"requires_escalation\": false,\n  \"rewrite\": null,\n  \"refusal_reason\": null\n}\n```",
+      "parsed_output": {
+        "intent": "query",
+        "entities": [
+          {
+            "entity": "ticket_id",
+            "value": "TCK-4008"
+          }
+        ],
+        "route": "status",
+        "requires_escalation": false,
+        "rewrite": null,
+        "refusal_reason": null
+      },
+      "expected": {
+        "intent": "previous_ticket_search",
+        "entities": {
+          "ticket_id": "TCK-4008"
+        },
+        "route": "search_previous_tickets",
+        "requires_escalation": false,
+        "rewrite": null,
+        "refusal_reason": null
+      }
+    },
+    {
+      "id": "FT-079",
+      "raw_output": "```json\n{\n  \"intent\": \"payment_status\",\n  \"entities\": [\n    {\n      \"name\": \"PAYMENT_STATUS_ID\",\n      \"value\": \"PAY-2042\"\n    }\n  ],\n  \"route\": \"payment_status_route\",\n  \"requires_escalation\": false,\n  \"rewrite\": null,\n  \"refusal_reason\": null\n}\n```",
+      "parsed_output": {
+        "intent": "payment_status",
+        "entities": [
+          {
+            "name": "PAYMENT_STATUS_ID",
+            "value": "PAY-2042"
+          }
+        ],
+        "route": "payment_status_route",
+        "requires_escalation": false,
+        "rewrite": null,
+        "refusal_reason": null
+      },
+      "expected": {
+        "intent": "payment_status",
+        "entities": {
+          "payment_id": "PAY-2042"
+        },
+        "route": "get_payment_status",
+        "requires_escalation": false,
+        "rewrite": null,
+        "refusal_reason": null
+      }
+    }
+  ]
+}

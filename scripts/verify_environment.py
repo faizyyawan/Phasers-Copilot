@@ -40,8 +40,8 @@ def package_version(package_name: str) -> str:
 
 def main() -> None:
     project_root = Path(__file__).resolve().parents[1]
-    venv_root = project_root / ".venv"
     executable = Path(sys.executable).resolve()
+    allowed_venv_roots = sorted(project_root.glob(".venv*"))
 
     print("Environment report")
     print("==================")
@@ -54,8 +54,14 @@ def main() -> None:
         fail("Python must be 3.11.")
     if platform.architecture()[0] != "64bit":
         fail("Python must be 64-bit.")
-    if venv_root.resolve() not in executable.parents:
-        fail(f"Interpreter is not inside project .venv: {venv_root}")
+    if not allowed_venv_roots:
+        fail("No project virtual environment matching .venv* was found.")
+    if not any(venv_root.resolve() in executable.parents for venv_root in allowed_venv_roots):
+        roots = ", ".join(str(path) for path in allowed_venv_roots)
+        fail(
+            "Interpreter is not inside a supported project virtual "
+            f"environment: {roots}"
+        )
 
     print()
     print("Package versions")

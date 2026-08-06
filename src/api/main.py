@@ -19,6 +19,7 @@ from src.generation.generator import (
 from src.ingestion.index_documents import COLLECTION_NAME, run_indexing_pipeline
 from src.rag import RagResponse, answer_question
 from src.retrieval.retriever import DEFAULT_QDRANT_URL, DEFAULT_TOP_K, RetrievedChunk
+from src.routing.router import _router_adapter_dir, _router_enabled
 
 QDRANT_URL = os.getenv("QDRANT_URL", DEFAULT_QDRANT_URL)
 OLLAMA_URL = os.getenv("OLLAMA_URL", DEFAULT_OLLAMA_URL)
@@ -52,6 +53,7 @@ class ChatResponse(BaseModel):
     needs_handoff: bool
     handoff_reason: str | None = None
     model: str
+    routing_backend: str
     elapsed_seconds: float
     sources: list[str] | None = None
     retrieved_chunks: list[RetrievedChunkResponse] | None = None
@@ -71,6 +73,7 @@ class HealthResponse(BaseModel):
     qdrant: ComponentHealth
     ollama: ComponentHealth
     model: str
+    router: ComponentHealth
 
 
 def _section(metadata: dict[str, Any]) -> str | None:
@@ -151,6 +154,16 @@ def check_ollama() -> ComponentHealth:
         return ComponentHealth(ok=False, detail=str(exc))
 
 
+def check_router() -> ComponentHealth:
+    """Report configured router mode and adapter availability."""
+    if not _router_enabled():
+        return ComponentHealth(ok=True, detail="fine-tuned router disabled; using rules")
+    adapter_dir = _router_adapter_dir()
+    if adapter_dir.exists():
+        return ComponentHealth(ok=True, detail=f"fine-tuned router ready at {adapter_dir}")
+    return ComponentHealth(ok=False, detail=f"adapter missing at {adapter_dir}")
+
+
 @asynccontextmanager
 async def lifespan(_: FastAPI):
     """Initialize the vector index when requested by the container config."""
@@ -174,6 +187,7 @@ def health() -> HealthResponse:
         qdrant=check_qdrant(),
         ollama=check_ollama(),
         model=OLLAMA_MODEL,
+        router=check_router(),
     )
 
 
@@ -219,6 +233,7 @@ def support_chat(request: ChatRequest) -> ChatResponse:
         needs_handoff=response.needs_handoff,
         handoff_reason=response.handoff_reason,
         model=response.answer.model,
+        routing_backend=response.routing_backend,
         elapsed_seconds=perf_counter() - started_at,
     )
     if request.debug:

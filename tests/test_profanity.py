@@ -13,4 +13,6 @@ def test_censor_abusive_words_does_not_change_substrings() -> None:
 
 def test_contains_abusive_words_detects_terms() -> None:
     assert contains_abusive_words("fuck") is True
+    assert contains_abusive_words("fucked") is True
+    assert contains_abusive_words("nigga") is True
     assert contains_abusive_words("refund status please") is False

@@ -5,17 +5,17 @@ from __future__ import annotations
 import os
 import re
 
-DEFAULT_CENSORED_TERMS = (
-    "asshole",
-    "bastard",
-    "bitch",
-    "crap",
-    "damn",
-    "fuck",
-    "fucking",
-    "idiot",
-    "shit",
-    "stupid",
+DEFAULT_ABUSE_PATTERNS = (
+    r"asshole(?:s)?",
+    r"bastard(?:s)?",
+    r"bitch(?:es)?",
+    r"crap",
+    r"damn",
+    r"fuck(?:ed|er|ers|ing|s)?",
+    r"idiot(?:s)?",
+    r"nigg(?:a|as|er|ers)",
+    r"shit(?:ty|s)?",
+    r"stupid",
 )
 ABUSE_WARNING_ANSWER = (
     "I'm here to help, but please avoid abusive or offensive language. "
@@ -23,13 +23,23 @@ ABUSE_WARNING_ANSWER = (
 )
 
 
-def _configured_terms() -> tuple[str, ...]:
-    extra_terms = tuple(
+def _configured_patterns() -> tuple[str, ...]:
+    extra_patterns = tuple(
         term.strip().lower()
         for term in os.getenv("ABUSE_CENSOR_EXTRA_WORDS", "").split(",")
         if term.strip()
     )
-    return DEFAULT_CENSORED_TERMS + extra_terms
+    return DEFAULT_ABUSE_PATTERNS + extra_patterns
+
+
+def _abuse_pattern() -> re.Pattern[str] | None:
+    patterns = _configured_patterns()
+    if not patterns:
+        return None
+    return re.compile(
+        r"\b(" + "|".join(patterns) + r")\b",
+        flags=re.IGNORECASE,
+    )
 
 
 def _censor_match(match: re.Match[str]) -> str:
@@ -41,25 +51,15 @@ def _censor_match(match: re.Match[str]) -> str:
 
 def censor_abusive_words(text: str) -> str:
     """Mask configured abusive words without changing unrelated text."""
-    terms = _configured_terms()
-    if not terms:
+    pattern = _abuse_pattern()
+    if pattern is None:
         return text
-
-    pattern = re.compile(
-        r"\b(" + "|".join(re.escape(term) for term in terms) + r")\b",
-        flags=re.IGNORECASE,
-    )
     return pattern.sub(_censor_match, text)
 
 
 def contains_abusive_words(text: str) -> bool:
     """Return true when text contains configured abusive words."""
-    terms = _configured_terms()
-    if not terms:
+    pattern = _abuse_pattern()
+    if pattern is None:
         return False
-
-    pattern = re.compile(
-        r"\b(" + "|".join(re.escape(term) for term in terms) + r")\b",
-        flags=re.IGNORECASE,
-    )
     return bool(pattern.search(text))
