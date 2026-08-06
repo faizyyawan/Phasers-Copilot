@@ -1,0 +1,246 @@
+{
+  "metrics": {
+    "total": 10,
+    "valid_json_rate": 1.0,
+    "exact_match_rate": 0.3,
+    "route_accuracy": 0.7,
+    "intent_accuracy": 0.7,
+    "escalation_accuracy": 0.9,
+    "adapter_dir": "artifacts\\router-qlora-run1",
+    "model_name": "Qwen/Qwen2.5-1.5B-Instruct"
+  },
+  "predictions": [
+    {
+      "id": "FT-043",
+      "raw_output": "{\"intent\":\"policy_question\",\"entities\":{},\"route\":\"rag_search\",\"requires_escalation\":false,\"rewrite\":\"confirmed booking meaning\",\"refusal_reason\":null}",
+      "parsed_output": {
+        "intent": "policy_question",
+        "entities": {},
+        "route": "rag_search",
+        "requires_escalation": false,
+        "rewrite": "confirmed booking meaning",
+        "refusal_reason": null
+      },
+      "expected": {
+        "intent": "policy_question",
+        "entities": {},
+        "route": "rag_search",
+        "requires_escalation": false,
+        "rewrite": "confirmed booking status meaning",
+        "refusal_reason": null
+      }
+    },
+    {
+      "id": "FT-042",
+      "raw_output": "{\"intent\":\"policy_question\",\"entities\":{},\"route\":\"rag_search\",\"requires_escalation\":false,\"rewrite\":\"court booking advance payment eligibility guidance\",\"refusal_reason\":null}",
+      "parsed_output": {
+        "intent": "policy_question",
+        "entities": {},
+        "route": "rag_search",
+        "requires_escalation": false,
+        "rewrite": "court booking advance payment eligibility guidance",
+        "refusal_reason": null
+      },
+      "expected": {
+        "intent": "policy_question",
+        "entities": {},
+        "route": "rag_search",
+        "requires_escalation": false,
+        "rewrite": "advance payment amount for court booking",
+        "refusal_reason": null
+      }
+    },
+    {
+      "id": "FT-092",
+      "raw_output": "{\"intent\":\"human_escalation\",\"entities\":{\"payment_id\":\"PAY-2050\"},\"route\":\"human_escalation\",\"requires_escalation\":true,\"rewrite\":null,\"refusal_reason\":\"pending_payment_review\"}",
+      "parsed_output": {
+        "intent": "human_escalation",
+        "entities": {
+          "payment_id": "PAY-2050"
+        },
+        "route": "human_escalation",
+        "requires_escalation": true,
+        "rewrite": null,
+        "refusal_reason": "pending_payment_review"
+      },
+      "expected": {
+        "intent": "payment_status",
+        "entities": {
+          "payment_id": "PAY-2050"
+        },
+        "route": "get_payment_status",
+        "requires_escalation": true,
+        "rewrite": null,
+        "refusal_reason": null
+      }
+    },
+    {
+      "id": "FT-010",
+      "raw_output": "{\"intent\":\"payment_status\",\"entities\":{\"booking_id\":\"BK-1007\"},\"route\":\"get_payment_status\",\"requires_escalation\":true,\"rewrite\":null,\"refusal_reason\":null}",
+      "parsed_output": {
+        "intent": "payment_status",
+        "entities": {
+          "booking_id": "BK-1007"
+        },
+        "route": "get_payment_status",
+        "requires_escalation": true,
+        "rewrite": null,
+        "refusal_reason": null
+      },
+      "expected": {
+        "intent": "payment_status",
+        "entities": {
+          "booking_id": "BK-1007"
+        },
+        "route": "get_payment_status",
+        "requires_escalation": true,
+        "rewrite": null,
+        "refusal_reason": null
+      }
+    },
+    {
+      "id": "FT-066",
+      "raw_output": "{\"intent\":\"unsupported_request\",\"entities\":{\"booking_id\":\"BK-1001\"},\"route\":\"human_escalation\",\"requires_escalation\":true,\"rewrite\":null,\"refusal_reason\":\"delete booking\"}",
+      "parsed_output": {
+        "intent": "unsupported_request",
+        "entities": {
+          "booking_id": "BK-1001"
+        },
+        "route": "human_escalation",
+        "requires_escalation": true,
+        "rewrite": null,
+        "refusal_reason": "delete booking"
+      },
+      "expected": {
+        "intent": "unsupported_request",
+        "entities": {
+          "booking_id": "BK-1001"
+        },
+        "route": "human_escalation",
+        "requires_escalation": true,
+        "rewrite": null,
+        "refusal_reason": "unrestricted_sql_not_allowed"
+      }
+    },
+    {
+      "id": "FT-051",
+      "raw_output": "{\"intent\":\"court_availability\",\"entities\":{\"court_id\":\"crt-005\",\"date\":\"2026-09-10\",\"time\":\"19:30\"},\"route\":\"get_court_availability\",\"requires_escalation\":false,\"rewrite\":null,\"refusal_reason\":null}",
+      "parsed_output": {
+        "intent": "court_availability",
+        "entities": {
+          "court_id": "crt-005",
+          "date": "2026-09-10",
+          "time": "19:30"
+        },
+        "route": "get_court_availability",
+        "requires_escalation": false,
+        "rewrite": null,
+        "refusal_reason": null
+      },
+      "expected": {
+        "intent": "court_availability",
+        "entities": {
+          "court_id": "CRT-005",
+          "date": "2026-09-10",
+          "time": "19:30"
+        },
+        "route": "get_court_availability",
+        "requires_escalation": false,
+        "rewrite": null,
+        "refusal_reason": null
+      }
+    },
+    {
+      "id": "FT-002",
+      "raw_output": "{\"intent\":\"booking_status\",\"entities\":{\"booking_id\":\"BK-1001\"},\"route\":\"get_booking_status\",\"requires_escalation\":false,\"rewrite\":null,\"refusal_reason\":null}",
+      "parsed_output": {
+        "intent": "booking_status",
+        "entities": {
+          "booking_id": "BK-1001"
+        },
+        "route": "get_booking_status",
+        "requires_escalation": false,
+        "rewrite": null,
+        "refusal_reason": null
+      },
+      "expected": {
+        "intent": "booking_status",
+        "entities": {
+          "booking_id": "BK-1001"
+        },
+        "route": "get_booking_status",
+        "requires_escalation": false,
+        "rewrite": null,
+        "refusal_reason": null
+      }
+    },
+    {
+      "id": "FT-071",
+      "raw_output": "{\"intent\":\"policy_question\",\"entities\":{},\"route\":\"rag_search\",\"requires_escalation\":false,\"rewrite\":\"rain cancellation policy guidance\",\"refusal_reason\":null}",
+      "parsed_output": {
+        "intent": "policy_question",
+        "entities": {},
+        "route": "rag_search",
+        "requires_escalation": false,
+        "rewrite": "rain cancellation policy guidance",
+        "refusal_reason": null
+      },
+      "expected": {
+        "intent": "unsupported_request",
+        "entities": {},
+        "route": "human_escalation",
+        "requires_escalation": true,
+        "rewrite": null,
+        "refusal_reason": "unsupported_legal_claim"
+      }
+    },
+    {
+      "id": "FT-016",
+      "raw_output": "{\"intent\":\"ticket_status\",\"entities\":{\"ticket_id\":\"TCK-4008\"},\"route\":\"get_ticket_status\",\"requires_escalation\":false,\"rewrite\":null,\"refusal_reason\":null}",
+      "parsed_output": {
+        "intent": "ticket_status",
+        "entities": {
+          "ticket_id": "TCK-4008"
+        },
+        "route": "get_ticket_status",
+        "requires_escalation": false,
+        "rewrite": null,
+        "refusal_reason": null
+      },
+      "expected": {
+        "intent": "previous_ticket_search",
+        "entities": {
+          "ticket_id": "TCK-4008"
+        },
+        "route": "search_previous_tickets",
+        "requires_escalation": false,
+        "rewrite": null,
+        "refusal_reason": null
+      }
+    },
+    {
+      "id": "FT-079",
+      "raw_output": "{\"intent\":\"payment_status\",\"entities\":{\"payment_id\":\"PAY-2042\"},\"route\":\"get_payment_status\",\"requires_escalation\":false,\"rewrite\":null,\"refusal_reason\":null}",
+      "parsed_output": {
+        "intent": "payment_status",
+        "entities": {
+          "payment_id": "PAY-2042"
+        },
+        "route": "get_payment_status",
+        "requires_escalation": false,
+        "rewrite": null,
+        "refusal_reason": null
+      },
+      "expected": {
+        "intent": "payment_status",
+        "entities": {
+          "payment_id": "PAY-2042"
+        },
+        "route": "get_payment_status",
+        "requires_escalation": false,
+        "rewrite": null,
+        "refusal_reason": null
+      }
+    }
+  ]
+}
