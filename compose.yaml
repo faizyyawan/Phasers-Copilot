@@ -16,6 +16,20 @@ services:
       timeout: 5s
       retries: 5
 
+  ollama:
+    image: ollama/ollama:latest
+    container_name: embeds-rag-ollama
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:11434:11434"
+    volumes:
+      - ollama_models:/root/.ollama
+    healthcheck:
+      test: ["CMD", "ollama", "list"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+
   backend:
     build:
       context: .
@@ -24,18 +38,17 @@ services:
     restart: unless-stopped
     depends_on:
       - qdrant
+      - ollama
     ports:
       - "127.0.0.1:8000:8000"
     environment:
       QDRANT_URL: http://qdrant:6333
-      OLLAMA_URL: http://host.docker.internal:11434
-      OLLAMA_MODEL: qwen3:8b
+      OLLAMA_URL: http://ollama:11434
+      OLLAMA_MODEL: qwen3:0.6b
       AUTO_INDEX_ON_START: "true"
       HF_HOME: /cache/huggingface
-      ROUTER_USE_FINE_TUNED: "true"
+      ROUTER_USE_FINE_TUNED: "false"
       ROUTER_ADAPTER_DIR: /app/artifacts/router-qlora-run1
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
     volumes:
       - hf_cache:/cache/huggingface
     healthcheck:
@@ -79,3 +92,4 @@ services:
 volumes:
   qdrant_storage:
   hf_cache:
+  ollama_models:
